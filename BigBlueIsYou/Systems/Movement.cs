@@ -47,6 +47,7 @@ namespace Systems
                         move(entity, 1, 0);
                         break;
                 }
+                movable.facing = Components.Direction.Stopped;
             }
         }
 

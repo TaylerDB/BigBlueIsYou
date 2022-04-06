@@ -32,27 +32,31 @@ namespace Systems
                         // BUG: Note the Keys are hardcoded here and if they are changed to
                         //      something else in the game model when the snake entity is created
                         //      those keys won't be recognized here.
-                        if ((movable.facing == Components.Direction.Up) && key == Keys.Down)
-                        {
-                            canTurn = false;
-                        }
-                        if ((movable.facing == Components.Direction.Down) && key == Keys.Up)
-                        {
-                            canTurn = false;
-                        }
-                        if ((movable.facing == Components.Direction.Left) && key == Keys.Right)
-                        {
-                            canTurn = false;
-                        }
-                        if ((movable.facing == Components.Direction.Right) && key == Keys.Left)
-                        {
-                            canTurn = false;
-                        }
 
-                        if (canTurn)
+                        if (key == Keys.Down)
                         {
                             movable.facing = input.keys[key];
                         }
+                        if (key == Keys.Up)
+                        {
+                            //canTurn = false;
+                            movable.facing = input.keys[key];
+                        }
+                        if (key == Keys.Right)
+                        {
+                            //canTurn = false;
+                            movable.facing = input.keys[key];
+                        }
+                        if (key == Keys.Left)
+                        {
+                            //canTurn = false;
+                            movable.facing = input.keys[key];
+                        }
+
+                        //if (canTurn)
+                        //{
+                        //    movable.facing = input.keys[key];
+                        //}
                     }
                 }
             }

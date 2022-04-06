@@ -5,14 +5,14 @@ using System.Collections.Generic;
 
 namespace Entities
 {
-    public class SnakeSegment
+    public class BigBlue
     {
-        private const int MOVE_INTERVAL = 150; // milliseconds
-        public static Entity create(Texture2D square, int x, int y)
+        private const int MOVE_INTERVAL = 300; // milliseconds
+        public static Entity create(Texture2D BigBlue, int x, int y)
         {
             var snake = new Entity();
 
-            snake.Add(new Components.Appearance(square, Color.White, Color.Black));
+            snake.Add(new Components.Appearance(BigBlue, Color.White, Color.Black));
             snake.Add(new Components.Position(x, y));
             snake.Add(new Components.Collision());
             snake.Add(new Components.Movable(Components.Direction.Stopped, MOVE_INTERVAL));

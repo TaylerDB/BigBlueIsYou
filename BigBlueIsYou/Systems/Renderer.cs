@@ -32,7 +32,7 @@ namespace Systems
             //
             // Draw a blue background
             Rectangle background = new Rectangle(OFFSET_X, OFFSET_Y, GRID_SIZE * CELL_SIZE, GRID_SIZE * CELL_SIZE);
-            m_spriteBatch.Draw(m_texBackground, background, Color.Blue);
+            m_spriteBatch.Draw(m_texBackground, background, Color.Black);
 
             foreach (var entity in m_entities.Values)
             {

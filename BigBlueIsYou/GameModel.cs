@@ -8,7 +8,7 @@ namespace BigBlueIsYou
 {
     class GameModel
     {
-        private const int GRID_SIZE = 50;
+        private const int GRID_SIZE = 20;   // Size of game
         private const int OBSTACLE_COUNT = 15;
         private readonly int WINDOW_WIDTH;
         private readonly int WINDOW_HEIGHT;
@@ -22,7 +22,7 @@ namespace BigBlueIsYou
         private Systems.KeyboardInput m_sysKeyboardInput;
 
         public GameModel(int width, int height)
-            {
+        {
             this.WINDOW_WIDTH = width;
             this.WINDOW_HEIGHT = height;
         }
@@ -30,6 +30,7 @@ namespace BigBlueIsYou
         public void Initialize(ContentManager content, SpriteBatch spriteBatch)
         {
             var texSquare = content.Load<Texture2D>("Images/square");
+            var bigBlueSquare = content.Load<Texture2D>("Images/BigBlue");
 
             m_sysRenderer = new Systems.Renderer(spriteBatch, texSquare, WINDOW_WIDTH, WINDOW_HEIGHT, GRID_SIZE);
             m_sysCollision = new Systems.Collision((entity) =>
@@ -44,7 +45,7 @@ namespace BigBlueIsYou
 
             initializeBorder(texSquare);
             initializeObstacles(texSquare);
-            initializeSnake(texSquare);
+            initializeSnake(bigBlueSquare);
             AddEntity(createFood(texSquare));
         }
 
@@ -131,9 +132,9 @@ namespace BigBlueIsYou
 
             while (!done)
             {
-                int x = (int)rnd.nextRange(1, GRID_SIZE - 1);
-                int y = (int)rnd.nextRange(1, GRID_SIZE - 1);
-                var proposed = SnakeSegment.create(square, x, y);
+                int x = 1; //(int)rnd.nextRange(1, GRID_SIZE - 1);
+                int y = 1; //(int)rnd.nextRange(1, GRID_SIZE - 1);
+                var proposed = BigBlue.create(square, x, y);
                 if (!m_sysCollision.collidesWithAny(proposed))
                 {
                     AddEntity(proposed);
