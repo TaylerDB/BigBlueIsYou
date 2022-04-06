@@ -3,6 +3,9 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Text;
 
 namespace BigBlueIsYou
 {
@@ -31,6 +34,33 @@ namespace BigBlueIsYou
         {
             var texSquare = content.Load<Texture2D>("Images/square");
             var bigBlueSquare = content.Load<Texture2D>("Images/BigBlue");
+
+            //StreamReader reader = File.OpenText(@"C:\Users\tayler\source\repos\BigBlueIsYou\BigBlueIsYou\Content\Levels");
+            //string line[] = content.Load<XmlImporter>("Levels/levels-all");
+
+            //while ((line = reader.ReadLine()) != null)
+            //{
+            //    System.Console.WriteLine(line);
+            //}
+
+            Debug.WriteLine("Attempting to find file");
+
+            //if (File.Exists("levels-all.bbiy"))
+            //var line = TitleContainer.OpenStream("levels-all.bbiy");
+
+            //Debug.WriteLine(line);
+            //var file = content.Load<XmlWriterTraceListener>("Levels/levels-all");
+
+            //using (var fs = TitleContainer.OpenStream(@"C:\Users\tayler\source\repos\BigBlueIsYou\BigBlueIsYou\Content\Levels\levels-all.bbiy"))
+            //{
+            //    byte[] b = new byte[10];
+            //    UTF8Encoding temp = new UTF8Encoding(true);
+            //    while (fs.Read(b, 0, b.Length) > 0)
+            //    {
+            //        Debug.WriteLine(temp.GetString(b));
+            //    }
+            //}
+
 
             m_sysRenderer = new Systems.Renderer(spriteBatch, texSquare, WINDOW_WIDTH, WINDOW_HEIGHT, GRID_SIZE);
             m_sysCollision = new Systems.Collision((entity) =>

@@ -51,3 +51,6 @@
 /processorParam:TextureFormat=Color
 /build:Images/square.png
 
+#begin Levels/levels-all.bbiy
+/copy:Levels/levels-all.bbiy
+
