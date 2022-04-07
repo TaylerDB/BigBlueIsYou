@@ -49,7 +49,26 @@ namespace BigBlueIsYou
             //var line = TitleContainer.OpenStream("levels-all.bbiy");
 
             //Debug.WriteLine(line);
-            //var file = content.Load<XmlWriterTraceListener>("Levels/levels-all");
+            var file = new FileStream("Content/Levels/levels-all.bbiy", FileMode.Open, FileAccess.Read);
+
+            //StreamReader streamReader = new StreamReader(file);
+            
+            // Create a byte array 
+            // to read from the 
+            // text file
+            byte[] readArr = new byte[file.Length];
+            int count;
+
+            // Using the Read method 
+            // read until end of file
+            while ((count = file.Read(readArr, 0, readArr.Length)) > 0)
+            {
+                Debug.WriteLine(Encoding.UTF8.GetString(readArr, 0, count));
+            }
+
+            // Close the FileStream ObjectS
+            file.Close();
+            //Debug.ReadKey();
 
             //using (var fs = TitleContainer.OpenStream(@"C:\Users\tayler\source\repos\BigBlueIsYou\BigBlueIsYou\Content\Levels\levels-all.bbiy"))
             //{
