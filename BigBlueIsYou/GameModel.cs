@@ -24,6 +24,8 @@ namespace BigBlueIsYou
         private Systems.Movement m_sysMovement;
         private Systems.KeyboardInput m_sysKeyboardInput;
 
+        private string[] levelsArray;
+
         public GameModel(int width, int height)
         {
             this.WINDOW_WIDTH = width;
@@ -45,13 +47,8 @@ namespace BigBlueIsYou
 
             Debug.WriteLine("Attempting to find file");
 
-            //if (File.Exists("levels-all.bbiy"))
-            //var line = TitleContainer.OpenStream("levels-all.bbiy");
-
             //Debug.WriteLine(line);
             var file = new FileStream("Content/Levels/levels-all.bbiy", FileMode.Open, FileAccess.Read);
-
-            //StreamReader streamReader = new StreamReader(file);
             
             // Create a byte array 
             // to read from the 
@@ -60,25 +57,78 @@ namespace BigBlueIsYou
             int count;
 
             // Using the Read method 
-            // read until end of file
+            // read until end of file - neccesary to keep
             while ((count = file.Read(readArr, 0, readArr.Length)) > 0)
             {
-                Debug.WriteLine(Encoding.UTF8.GetString(readArr, 0, count));
+                //Debug.WriteLine(Encoding.UTF8.GetString(readArr, 0, count));
             }
+
+            levelsArray = new string[readArr.Length];
+            // Convert to string
+            string levelsString = Encoding.UTF8.GetString(readArr, 0, readArr.Length);
+
+            // Convert to array
+            for (int i = 0; i < readArr.Length; i++)
+            {
+               levelsArray[i] = readArr[i].ToString();
+            }
+
+
+            //Debug.WriteLine("Levels: ", levelsSting);
+
+            /***************************
+             *  76 - L
+             * 101 - e
+             * 118 - v
+             * 101 - e
+             * 108 - l
+             *  45 - '-'
+             *  49 - 1
+             *  13 - CR - new line
+             *  10 - Line feed
+             *  50 - 2
+             *  48 - 0
+             *  32 - Space 
+             * 120 - x
+             *  32 - Space
+             *  50 - 2
+             *  48 - 0
+             *  13 - Carriage Return
+             *  10 - Line feed
+             * 104 - h
+             * 104 - h
+             *****************************/
 
             // Close the FileStream ObjectS
             file.Close();
-            //Debug.ReadKey();
 
-            //using (var fs = TitleContainer.OpenStream(@"C:\Users\tayler\source\repos\BigBlueIsYou\BigBlueIsYou\Content\Levels\levels-all.bbiy"))
-            //{
-            //    byte[] b = new byte[10];
-            //    UTF8Encoding temp = new UTF8Encoding(true);
-            //    while (fs.Read(b, 0, b.Length) > 0)
-            //    {
-            //        Debug.WriteLine(temp.GetString(b));
-            //    }
-            //}
+            // Get level 1 string
+            int lFrom1 = levelsString.IndexOf("Level-1\r\n") + "Level-1\r\n".Length;
+            int lTo1 = levelsString.IndexOf("Level-2");
+            string level1String = levelsString.Substring(lFrom1, lTo1 - lFrom1);
+            
+
+            // Get size of level 1 first dimension
+            int n1To1 = level1String.IndexOf(" ");
+            string level1Size1 = level1String.Substring(0, n1To1 - 0);
+            Debug.WriteLine("level1Size1: " + level1Size1);
+
+            // Get size of level 1 second dimension
+            int n2From1 = level1String.IndexOf("x ") + "x ".Length;
+            int n2To1 = level1String.IndexOf("\r\n");
+            string level1Size2 = level1String.Substring(n2From1, n2To1 - n2From1);
+            Debug.WriteLine("level1Size2: " + level1Size2);
+
+
+
+
+            // Get level 2 string
+            int sFrom2 = levelsString.IndexOf("Level-2\r\n") + "Level-2\r\n".Length;
+            int sTo2 = levelsString.IndexOf("Level-3");
+            string level2String = levelsString.Substring(sFrom2, sTo2 - sFrom2);
+            //Debug.WriteLine("result2: " + level2String);
+
+
 
 
             m_sysRenderer = new Systems.Renderer(spriteBatch, texSquare, WINDOW_WIDTH, WINDOW_HEIGHT, GRID_SIZE);
