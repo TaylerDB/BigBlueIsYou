@@ -3,6 +3,7 @@
     public enum GameStateEnum
     {
         MainMenu,
+        Levels,
         GamePlay,
         HighScores,
         Help,

@@ -47,7 +47,7 @@ namespace BigBlueIsYou
                 // If enter is pressed, return the appropriate new state
                 if (Keyboard.GetState().IsKeyDown(Keys.Enter) && m_currentSelection == MenuState.NewGame)
                 {
-                    return GameStateEnum.GamePlay;
+                    return GameStateEnum.Levels;
                 }
                 if (Keyboard.GetState().IsKeyDown(Keys.Enter) && m_currentSelection == MenuState.HighScores)
                 {

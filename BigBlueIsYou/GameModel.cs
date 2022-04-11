@@ -103,60 +103,62 @@ namespace BigBlueIsYou
             // Close the FileStream ObjectS
             file.Close();
 
-            // Get level 1 string
-            int lFrom1 = levelsString.IndexOf("Level-1\r\n") + "Level-1\r\n".Length;
-            int lTo1 = levelsString.IndexOf("Level-2");
-            string level1String = levelsString.Substring(lFrom1, lTo1 - lFrom1);
-            //Debug.WriteLine("result1: " + level1String);
+            // Get how many different levels are in file
+            string levelNumberString = "Level-";
+            int levelCount = 0;
+            int j = 0;
+            //string loadLevel;
+            while ((j = levelsString.IndexOf(levelNumberString, j)) != -1)
+            {
+                j += levelNumberString.Length;
+                levelCount++;
+            }
+            Debug.WriteLine("Count: " + levelCount.ToString());
+            
+            int level = 2;
+            
+            // Get level string minus Level-#
+            int from = levelsString.IndexOf("Level-" + level.ToString() + "\r\n") + ("Level-" + level.ToString() + "\r\n").Length;
+            int nextLevel = level + 1;
+            int to = levelsString.IndexOf("Level-" + nextLevel.ToString());
+            string selectedLevelString = levelsString.Substring(from, to - from);
+            //Debug.WriteLine("result1: " + selectedLevelString);
 
-            // Get size of level 1 first dimension
-            int n1To1 = level1String.IndexOf(" ");
-            string level1Size1 = level1String.Substring(0, n1To1 - 0);
-            //Debug.WriteLine("level1Size1: " + level1Size1);
+            // Get first level dimension
+            int d1To = selectedLevelString.IndexOf(" ");
+            string levelDimensionString1 = selectedLevelString.Substring(0, d1To - 0);
+            Debug.WriteLine("level dimension 1: " + levelDimensionString1);
 
             // Get size of level 1 second dimension
-            int n2From1 = level1String.IndexOf("x ") + "x ".Length;
-            int n2To1 = level1String.IndexOf("\r\n");
-            string level1Size2 = level1String.Substring(n2From1, n2To1 - n2From1);
-            //Debug.WriteLine("level1Size2: " + level1Size2);
+            int d2From = selectedLevelString.IndexOf("x ") + "x ".Length;
+            int d2To = selectedLevelString.IndexOf("\r\n");
+            string levelDimensionString2 = selectedLevelString.Substring(d2From, d2To - d2From);
+            Debug.WriteLine("level dimension 2: " + levelDimensionString2);
 
-            char[] charArr = level1String.ToCharArray();
-            string result = "";
-            for (int i = 0; i < charArr.Length; i++)
-            {
-                if (charArr[i] != 'h')
-                {
-                    result += charArr[i];
-                }
-                else
-                    break;
-            }
+            // Get level by itself
+            int levelStart = selectedLevelString.IndexOf("\r\n") + "\r\n".Length;
+            int levelEnd = selectedLevelString.Length; //selectedLevelString.LastIndexOf(selectedLevelString);
+            string actualLevel = selectedLevelString.Substring(levelStart, levelEnd - levelStart);
+            Debug.WriteLine("Actual Level: " + actualLevel);
 
-            // Get how many different levels are in file
-            string ch = "Level-";
-            int count1 = 0;
-            int j = 0;
-            while ((j = levelsString.IndexOf(ch, j)) != -1)
-            {
-                j += ch.Length;
-                count1++;
-            }
-            
-            Debug.WriteLine("Count: " + count1.ToString());
+            //char[] charArr = level1String.ToCharArray();
+            //string result = "";
+            //for (int i = 0; i < charArr.Length; i++)
+            //{
+            //    if (charArr[i] != 'h')
+            //    {
+            //        result += charArr[i];
+            //    }
+            //    else
+            //        break;
+            //}
+
+
 
             //Debug.WriteLine("result: " + result);
 
             //string level1Display = level1String.Substring(0, result.Length - 0);
             //Debug.WriteLine("result: " + level1Display);
-
-            // Get level 2 string
-            int sFrom2 = levelsString.IndexOf("Level-2\r\n") + "Level-2\r\n".Length;
-            int sTo2 = levelsString.IndexOf("Level-3");
-            string level2String = levelsString.Substring(sFrom2, sTo2 - sFrom2);
-            //Debug.WriteLine("result2: " + level2String);
-
-
-
 
             m_sysRenderer = new Systems.Renderer(spriteBatch, texSquare, WINDOW_WIDTH, WINDOW_HEIGHT, GRID_SIZE);
             m_sysCollision = new Systems.Collision((entity) =>
