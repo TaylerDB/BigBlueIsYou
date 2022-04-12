@@ -7,7 +7,7 @@ namespace BigBlueIsYou
         [STAThread]
         static void Main()
         {
-            using (var game = new ECSSnakeGame())
+            using (var game = new ECSBigBlueIsYou())
                 game.Run();
         }
     }

@@ -5,14 +5,14 @@ using System.Collections.Generic;
 
 namespace BigBlueIsYou
 {
-    public class ECSSnakeGame : Game
+    public class ECSBigBlueIsYou : Game
     {
         private GraphicsDeviceManager m_graphics;
         private IGameState m_currentState;
         private GameStateEnum m_nextStateEnum = GameStateEnum.MainMenu;
         private Dictionary<GameStateEnum, IGameState> m_states;
 
-        public ECSSnakeGame()
+        public ECSBigBlueIsYou()
         {
             m_graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
@@ -79,7 +79,7 @@ namespace BigBlueIsYou
                 m_currentState = m_states[m_nextStateEnum];
                 m_currentState.initializeSession();
             }
-            
+
 
             base.Draw(gameTime);
         }

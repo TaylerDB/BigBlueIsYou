@@ -1,4 +1,5 @@
-﻿using Entities;
+﻿using BigBlueIsYou.Views;
+using Entities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -25,7 +26,8 @@ namespace BigBlueIsYou
         private Systems.Movement m_sysMovement;
         private Systems.KeyboardInput m_sysKeyboardInput;
 
-        private string[] levelsArray;
+        LevelsView levelsView = new LevelsView();
+
 
         public GameModel(int width, int height)
         {
@@ -38,88 +40,14 @@ namespace BigBlueIsYou
             var texSquare = content.Load<Texture2D>("Images/square");
             var bigBlueSquare = content.Load<Texture2D>("Images/BigBlue");
 
-            //StreamReader reader = File.OpenText(@"C:\Users\tayler\source\repos\BigBlueIsYou\BigBlueIsYou\Content\Levels");
-            //string line[] = content.Load<XmlImporter>("Levels/levels-all");
 
-            //while ((line = reader.ReadLine()) != null)
-            //{
-            //    System.Console.WriteLine(line);
-            //}
+            // TODO: Find why the getter is passing an empty string
+            string levelsString = levelsView.LevelsString;
+            int levelChoice = levelsView.CurrentSelection;
 
-            Debug.WriteLine("Attempting to find file");
-
-            //Debug.WriteLine(line);
-            var file = new FileStream("Content/Levels/levels-all.bbiy", FileMode.Open, FileAccess.Read);
-            
-            // Create a byte array 
-            // to read from the 
-            // text file
-            byte[] readArr = new byte[file.Length];
-            int count;
-
-            // Using the Read method 
-            // read until end of file - neccesary to keep
-            while ((count = file.Read(readArr, 0, readArr.Length)) > 0)
-            {
-                //Debug.WriteLine(Encoding.UTF8.GetString(readArr, 0, count));
-            }
-
-            levelsArray = new string[readArr.Length];
-            // Convert to string
-            string levelsString = Encoding.UTF8.GetString(readArr, 0, readArr.Length);
-
-            // Convert to array
-            for (int i = 0; i < readArr.Length; i++)
-            {
-               levelsArray[i] = readArr[i].ToString();
-            }
-
-
-            //Debug.WriteLine("Levels: ", levelsSting);
-
-            /***************************
-             *  76 - L
-             * 101 - e
-             * 118 - v
-             * 101 - e
-             * 108 - l
-             *  45 - '-'
-             *  49 - 1
-             *  13 - CR - new line
-             *  10 - Line feed
-             *  50 - 2
-             *  48 - 0
-             *  32 - Space 
-             * 120 - x
-             *  32 - Space
-             *  50 - 2
-             *  48 - 0
-             *  13 - Carriage Return
-             *  10 - Line feed
-             * 104 - h
-             * 104 - h
-             *****************************/
-
-            // Close the FileStream ObjectS
-            file.Close();
-
-            // Get how many different levels are in file
-            string levelNumberString = "Level-";
-            int levelCount = 0;
-            int j = 0;
-            //string loadLevel;
-            while ((j = levelsString.IndexOf(levelNumberString, j)) != -1)
-            {
-                j += levelNumberString.Length;
-                levelCount++;
-            }
-            Debug.WriteLine("Count: " + levelCount.ToString());
-            
-            int level = 2;
-            
             // Get level string minus Level-#
-            int from = levelsString.IndexOf("Level-" + level.ToString() + "\r\n") + ("Level-" + level.ToString() + "\r\n").Length;
-            int nextLevel = level + 1;
+            int from = levelsString.IndexOf("Level-" + levelChoice.ToString() + "\r\n") + ("Level-" + levelChoice.ToString() + "\r\n").Length;
+            int nextLevel = levelChoice + 1;
             int to = levelsString.IndexOf("Level-" + nextLevel.ToString());
             string selectedLevelString = levelsString.Substring(from, to - from);
             //Debug.WriteLine("result1: " + selectedLevelString);
@@ -141,24 +69,6 @@ namespace BigBlueIsYou
             string actualLevel = selectedLevelString.Substring(levelStart, levelEnd - levelStart);
             Debug.WriteLine("Actual Level: " + actualLevel);
 
-            //char[] charArr = level1String.ToCharArray();
-            //string result = "";
-            //for (int i = 0; i < charArr.Length; i++)
-            //{
-            //    if (charArr[i] != 'h')
-            //    {
-            //        result += charArr[i];
-            //    }
-            //    else
-            //        break;
-            //}
-
-
-
-            //Debug.WriteLine("result: " + result);
-
-            //string level1Display = level1String.Substring(0, result.Length - 0);
-            //Debug.WriteLine("result: " + level1Display);
 
             m_sysRenderer = new Systems.Renderer(spriteBatch, texSquare, WINDOW_WIDTH, WINDOW_HEIGHT, GRID_SIZE);
             m_sysCollision = new Systems.Collision((entity) =>

@@ -22,6 +22,8 @@ namespace BigBlueIsYou
         private MenuState m_currentSelection = MenuState.NewGame;
         private bool m_waitForKeyRelease = false;
 
+        KeyboardState oldState;
+
         public override void loadContent(ContentManager contentManager)
         {
             m_fontMenu = contentManager.Load<SpriteFont>("Fonts/menu");
@@ -29,6 +31,8 @@ namespace BigBlueIsYou
         }
         public override GameStateEnum processInput(GameTime gameTime)
         {
+            //KeyboardState newState = Keyboard.GetState();
+
             // This is the technique I'm using to ensure one keypress makes one menu navigation move
             if (!m_waitForKeyRelease)
             {
