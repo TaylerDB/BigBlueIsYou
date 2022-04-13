@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using BigBlueIsYou.Views;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
@@ -76,10 +77,17 @@ namespace BigBlueIsYou
 
             if (m_currentState != m_states[m_nextStateEnum])
             {
+                if (m_nextStateEnum == GameStateEnum.GamePlay)
+                {
+                    LevelsView viewLevels = (LevelsView)m_states[GameStateEnum.Levels];
+                    GamePlayView viewGame = (GamePlayView)m_states[GameStateEnum.GamePlay];
+
+                    viewGame.setLevel(viewLevels.CurrentSelection, viewLevels.LevelsString);
+                }
+
                 m_currentState = m_states[m_nextStateEnum];
                 m_currentState.initializeSession();
             }
-
 
             base.Draw(gameTime);
         }

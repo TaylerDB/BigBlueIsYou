@@ -26,7 +26,7 @@ namespace BigBlueIsYou
         private Systems.Movement m_sysMovement;
         private Systems.KeyboardInput m_sysKeyboardInput;
 
-        LevelsView levelsView = new LevelsView();
+        
 
 
         public GameModel(int width, int height)
@@ -35,15 +35,15 @@ namespace BigBlueIsYou
             this.WINDOW_HEIGHT = height;
         }
 
-        public void Initialize(ContentManager content, SpriteBatch spriteBatch)
+        public void Initialize(ContentManager content, SpriteBatch spriteBatch, int levelChoice, string levelsString)
         {
             var texSquare = content.Load<Texture2D>("Images/square");
             var bigBlueSquare = content.Load<Texture2D>("Images/BigBlue");
 
 
             // TODO: Find why the getter is passing an empty string
-            string levelsString = levelsView.LevelsString;
-            int levelChoice = levelsView.CurrentSelection;
+            //string levelsString = levelsView.LevelsString;
+            //int levelChoice = levelsView.CurrentSelection;
 
             // Get level string minus Level-#
             int from = levelsString.IndexOf("Level-" + levelChoice.ToString() + "\r\n") + ("Level-" + levelChoice.ToString() + "\r\n").Length;
@@ -67,7 +67,7 @@ namespace BigBlueIsYou
             int levelStart = selectedLevelString.IndexOf("\r\n") + "\r\n".Length;
             int levelEnd = selectedLevelString.Length; //selectedLevelString.LastIndexOf(selectedLevelString);
             string actualLevel = selectedLevelString.Substring(levelStart, levelEnd - levelStart);
-            Debug.WriteLine("Actual Level: " + actualLevel);
+            Debug.WriteLine("Actual Level:\n" + actualLevel);
 
 
             m_sysRenderer = new Systems.Renderer(spriteBatch, texSquare, WINDOW_WIDTH, WINDOW_HEIGHT, GRID_SIZE);

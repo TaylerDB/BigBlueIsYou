@@ -21,11 +21,10 @@ namespace BigBlueIsYou.Views
         List<string> levelsList = new List<string>();
 
 
-        private int m_currentSelection;// = MenuState.NewGame;
+        private int m_currentSelection;
         private string[] levelsArray;
 
         public string levelsString;
-        //int levelChoice;
         int levelCount;
 
         public string LevelsString
@@ -46,45 +45,20 @@ namespace BigBlueIsYou.Views
             //set { m_currentSelection = value; }
         }
 
-
-
-
         public override void loadContent(ContentManager contentManager)
         {
             m_fontMenu = contentManager.Load<SpriteFont>("Fonts/menu");
             m_fontMenuSelect = contentManager.Load<SpriteFont>("Fonts/menu-select");
 
-
             Debug.WriteLine("Attempting to find file");
 
             // Open file
-            var file = new FileStream("Content/Levels/levels-all.bbiy", FileMode.Open, FileAccess.Read);
+            var file = new StreamReader("Content/Levels/levels-all.bbiy");
 
-            // Create a byte array 
-            // to read from the 
-            // text file
-            byte[] readArr = new byte[file.Length];
-            int count;
+            // Set file
+            levelsString = file.ReadToEnd();
 
-            // Using the Read method 
-            // read until end of file - neccesary to keep
-            while ((count = file.Read(readArr, 0, readArr.Length)) > 0)
-            {
-                //Debug.WriteLine(Encoding.UTF8.GetString(readArr, 0, count));
-            }
-
-            levelsArray = new string[readArr.Length];
-
-            // Convert to string
-            levelsString = Encoding.UTF8.GetString(readArr, 0, readArr.Length);
-
-            // Convert to array
-            for (int i = 0; i < readArr.Length; i++)
-            {
-                levelsArray[i] = readArr[i].ToString();
-            }
-
-            // Close the FileStream ObjectS
+            // Close file
             file.Close();
 
             // Get how many different levels are in file

@@ -10,10 +10,19 @@ namespace BigBlueIsYou
         ContentManager m_content;
         private GameModel m_gameModel;
 
+        private int m_levelSelection;
+        private string m_levelString;
+
         public override void initializeSession()
         {
             m_gameModel = new GameModel(m_graphics.PreferredBackBufferWidth, m_graphics.PreferredBackBufferHeight);
-            m_gameModel.Initialize(m_content, m_spriteBatch);
+            m_gameModel.Initialize(m_content, m_spriteBatch, m_levelSelection, m_levelString);
+        }
+
+        public void setLevel(int currentSelection, string levelsString)
+        {
+            m_levelSelection = currentSelection;
+            m_levelString = levelsString;
         }
 
         public override void loadContent(ContentManager content)
