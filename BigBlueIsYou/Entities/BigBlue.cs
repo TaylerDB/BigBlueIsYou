@@ -7,16 +7,16 @@ namespace Entities
 {
     public class BigBlue
     {
-        private const int MOVE_INTERVAL = 300; // milliseconds
+        private const int MOVE_INTERVAL = 600; // milliseconds
         public static Entity create(Texture2D BigBlue, int x, int y)
         {
-            var snake = new Entity();
+            var bigBlue = new Entity();
 
-            snake.Add(new Components.Appearance(BigBlue, Color.White, Color.Black));
-            snake.Add(new Components.Position(x, y));
-            snake.Add(new Components.Collision());
-            snake.Add(new Components.Movable(Components.Direction.Stopped, MOVE_INTERVAL));
-            snake.Add(new Components.KeyboardControlled(
+            bigBlue.Add(new Components.Appearance(BigBlue, Color.White, Color.Black));
+            bigBlue.Add(new Components.Position(x, y));
+            bigBlue.Add(new Components.Collision());
+            bigBlue.Add(new Components.Movable(Components.Direction.Stopped, MOVE_INTERVAL));
+            bigBlue.Add(new Components.KeyboardControlled(
                 new Dictionary<Keys, Components.Direction>
                 {
                         { Keys.Up, Components.Direction.Up },
@@ -25,7 +25,7 @@ namespace Entities
                         { Keys.Right, Components.Direction.Right }
                 }));
 
-            return snake;
+            return bigBlue;
         }
     }
 }

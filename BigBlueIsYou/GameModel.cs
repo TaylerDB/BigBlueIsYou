@@ -3,6 +3,7 @@ using Entities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -14,7 +15,7 @@ namespace BigBlueIsYou
     class GameModel
     {
         private const int GRID_SIZE = 20;   // Size of game
-        private const int OBSTACLE_COUNT = 15;
+
         private readonly int WINDOW_WIDTH;
         private readonly int WINDOW_HEIGHT;
 
@@ -26,7 +27,11 @@ namespace BigBlueIsYou
         private Systems.Movement m_sysMovement;
         private Systems.KeyboardInput m_sysKeyboardInput;
 
-        
+        int row;
+        int col;
+
+        char[,] charTopArr;
+        char[,] charBottomArr;
 
 
         public GameModel(int width, int height)
@@ -46,8 +51,9 @@ namespace BigBlueIsYou
             //int levelChoice = levelsView.CurrentSelection;
 
             // Get level string minus Level-#
-            int from = levelsString.IndexOf("Level-" + levelChoice.ToString() + "\r\n") + ("Level-" + levelChoice.ToString() + "\r\n").Length;
-            int nextLevel = levelChoice + 1;
+            int thisLevel = levelChoice + 1;
+            int from = levelsString.IndexOf("Level-" + thisLevel.ToString() + "\r\n") + ("Level-" + thisLevel.ToString() + "\r\n").Length;
+            int nextLevel = thisLevel + 1;
             int to = levelsString.IndexOf("Level-" + nextLevel.ToString());
             string selectedLevelString = levelsString.Substring(from, to - from);
             //Debug.WriteLine("result1: " + selectedLevelString);
@@ -67,7 +73,58 @@ namespace BigBlueIsYou
             int levelStart = selectedLevelString.IndexOf("\r\n") + "\r\n".Length;
             int levelEnd = selectedLevelString.Length; //selectedLevelString.LastIndexOf(selectedLevelString);
             string actualLevel = selectedLevelString.Substring(levelStart, levelEnd - levelStart);
-            Debug.WriteLine("Actual Level:\n" + actualLevel);
+            //Debug.WriteLine("Actual Level:\n" + actualLevel);
+
+            // Get row and col dimension of level
+            row = Int32.Parse(levelDimensionString1);
+            col = Int32.Parse(levelDimensionString2);
+
+            charTopArr = new char[row, col];
+            charBottomArr = new char[row, col];
+
+            string topLevel = actualLevel.Substring(0, actualLevel.Length / 2);
+            string bottomLevel = actualLevel.Substring(actualLevel.Length / 2, actualLevel.Length / 2);
+
+            Debug.WriteLine("topLevel:\n" + topLevel);
+            Debug.WriteLine("bottomLevel:\n" + bottomLevel);
+
+            // Put topLevel in a 2d char array charTopArr
+            int t = 0;
+            for (int r = 0; r < row; r++)
+            {
+                for (int c = 0; c < col; c++)
+                {
+                    if (topLevel[t] == '\r' || topLevel[t] == '\n')
+                    { 
+                        t++;
+                        c--;
+                    }
+                    else
+                    {
+                        charTopArr[r, c] = topLevel[t];
+                        t++;
+                    }
+                }
+            }
+
+            // Put bottomLevel in a 2d char array charBottomArr
+            int b = 0;
+            for (int r = 0; r < row; r++)
+            {
+                for (int c = 0; c < col; c++)
+                {
+                    if (bottomLevel[b] == '\r' || bottomLevel[b] == '\n')
+                    {
+                        b++;
+                        c--;
+                    }
+                    else
+                    {
+                        charBottomArr[r, c] = bottomLevel[b];
+                        b++;
+                    }
+                }
+            }
 
 
             m_sysRenderer = new Systems.Renderer(spriteBatch, texSquare, WINDOW_WIDTH, WINDOW_HEIGHT, GRID_SIZE);
@@ -81,9 +138,39 @@ namespace BigBlueIsYou
             m_sysMovement = new Systems.Movement();
             m_sysKeyboardInput = new Systems.KeyboardInput();
 
-            initializeBorder(texSquare);
-            initializeObstacles(texSquare);
-            initializeSnake(bigBlueSquare);
+            // Add objects to topLevel
+            for (int r = 0; r < row; r++)
+            {
+                for (int c = 0; c < col; c++)
+                {
+                    if (charTopArr[c, r] == 'h')
+                    {
+                        initializeBorder(texSquare, r, c);
+                    }
+                    //if (charBottomArr[c, r] == 'g')
+                    //{
+                    //    initializeObstacles(texSquare, r, c);
+                    //}
+                }
+            }
+            
+
+            // Add objects to bottomLevel
+            for (int r = 0; r < row; r++)
+            {
+                for (int c = 0; c < col; c++)
+                {
+                    if (charBottomArr[c, r] == 'b')
+                    {
+                        initializeBigBlue(bigBlueSquare, r, c);
+                    }
+                    if (charBottomArr[c, r] == 'w')
+                    {
+                        initializeObstacles(texSquare, r, c);
+                    }
+                }
+            }
+             
             AddEntity(createFood(texSquare));
         }
 
@@ -127,58 +214,47 @@ namespace BigBlueIsYou
             m_sysRenderer.Remove(entity.Id);
         }
 
-        private void initializeBorder(Texture2D square)
+        private void initializeBorder(Texture2D square, int x, int y)
         {
-            for (int position = 0; position < GRID_SIZE; position++)
+            var proposed = Hedge.create(square, x, y);
+            if (!m_sysCollision.collidesWithAny(proposed))
             {
-                var left = BorderBlock.create(square, 0, position);
-                AddEntity(left);
-
-                var right = BorderBlock.create(square, GRID_SIZE - 1, position);
-                AddEntity(right);
-
-                var top = BorderBlock.create(square, position, 0);
-                AddEntity(top);
-
-                var bottom = BorderBlock.create(square, position, GRID_SIZE - 1);
-                AddEntity(bottom);
+                AddEntity(proposed);
             }
+
+            //for (int position = 0; position < GRID_SIZE; position++)
+            //{
+            //    var left = BorderBlock.create(square, 0, position);
+            //    AddEntity(left);
+
+            //    var right = BorderBlock.create(square, GRID_SIZE - 1, position);
+            //    AddEntity(right);
+
+            //    var top = BorderBlock.create(square, position, 0);
+            //    AddEntity(top);
+
+            //    var bottom = BorderBlock.create(square, position, GRID_SIZE - 1);
+            //    AddEntity(bottom);
+            //}
         }
 
-        private void initializeObstacles(Texture2D square)
+        private void initializeObstacles(Texture2D square, int x, int y)
         {
-            MyRandom rnd = new MyRandom();
-            int remaining = OBSTACLE_COUNT;
-
-            while (remaining > 0)
+            var proposed = Wall.create(square, x, y);
+            if (!m_sysCollision.collidesWithAny(proposed))
             {
-                int x = (int)rnd.nextRange(1, GRID_SIZE - 1);
-                int y = (int)rnd.nextRange(1, GRID_SIZE - 1);
-                var proposed = Obstacle.create(square, x, y);
-                if (!m_sysCollision.collidesWithAny(proposed))
-                {
-                    AddEntity(proposed);
-                    remaining--;
-                }
+                AddEntity(proposed);
             }
+
         }
 
-        private void initializeSnake(Texture2D square)
+        private void initializeBigBlue(Texture2D square, int x, int y)
         {
-            MyRandom rnd = new MyRandom();
-            bool done = false;
-
-            while (!done)
+            var proposed = BigBlue.create(square, x, y);
+            if (!m_sysCollision.collidesWithAny(proposed))
             {
-                int x = 1; //(int)rnd.nextRange(1, GRID_SIZE - 1);
-                int y = 1; //(int)rnd.nextRange(1, GRID_SIZE - 1);
-                var proposed = BigBlue.create(square, x, y);
-                if (!m_sysCollision.collidesWithAny(proposed))
-                {
-                    AddEntity(proposed);
-                    done = true;
-                }
-            }
+                AddEntity(proposed);         
+            }            
         }
 
         private Entity createFood(Texture2D square)
