@@ -11,10 +11,15 @@ namespace Systems
     /// </summary>
     class KeyboardInput : System
     {
+        // For key presses
+        KeyboardState oldState;
+
         public KeyboardInput()
             : base(typeof(Components.KeyboardControlled))
         {
+            oldState = Keyboard.GetState();
         }
+
 
         public override void Update(GameTime gameTime)
         {
@@ -23,42 +28,66 @@ namespace Systems
                 var movable = entity.GetComponent<Components.Movable>();
                 var input = entity.GetComponent<Components.KeyboardControlled>();
 
-                foreach (var key in Keyboard.GetState().GetPressedKeys())
-                {
-                    if (input.keys.ContainsKey(key))
-                    {
+                //foreach (var key in Keyboard.GetState().GetPressedKeys())
+                //{
+                    //if (input.keys.ContainsKey(key))
+                    //{
                         bool canTurn = true;
                         // Protect agains turning back onto itself
                         // BUG: Note the Keys are hardcoded here and if they are changed to
                         //      something else in the game model when the snake entity is created
                         //      those keys won't be recognized here.
 
-                        if (key == Keys.Down)
-                        {
-                            movable.facing = input.keys[key];
-                        }
-                        if (key == Keys.Up)
-                        {
-                            //canTurn = false;
-                            movable.facing = input.keys[key];
-                        }
-                        if (key == Keys.Right)
-                        {
-                            //canTurn = false;
-                            movable.facing = input.keys[key];
-                        }
-                        if (key == Keys.Left)
-                        {
-                            //canTurn = false;
-                            movable.facing = input.keys[key];
-                        }
+                        //if (newState.IsKeyDown(Keys.F2))
+                        //{
+                        //    if (!oldState.IsKeyDown(Keys.F2))
+                        //    {
+
+                // Get keyboard state
+                KeyboardState newState = Keyboard.GetState();
+
+                if (newState.IsKeyDown(Keys.Up))
+                {
+                    if (!oldState.IsKeyDown(Keys.Up))
+                    {
+                        movable.facing = Components.Direction.Up;
+                    }
+                }
+
+                if (newState.IsKeyDown(Keys.Down))
+                {
+                    if (!oldState.IsKeyDown(Keys.Down))
+                    {
+                        movable.facing = Components.Direction.Down;
+                    }
+                }
+
+                if (newState.IsKeyDown(Keys.Right))
+                {
+                    if (!oldState.IsKeyDown(Keys.Right))
+                    {
+                        movable.facing = Components.Direction.Right;
+                    }
+                }
+
+                if (newState.IsKeyDown(Keys.Left))
+                {
+                    if (!oldState.IsKeyDown(Keys.Left))
+                    {
+                        movable.facing = Components.Direction.Left;
+                    }
+                }
+
+
+                // Update saved state
+                oldState = newState;
 
                         //if (canTurn)
                         //{
                         //    movable.facing = input.keys[key];
                         //}
-                    }
-                }
+                    //}
+                //}
             }
         }
     }

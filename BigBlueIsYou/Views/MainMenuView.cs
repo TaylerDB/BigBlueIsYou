@@ -37,12 +37,12 @@ namespace BigBlueIsYou
             if (!m_waitForKeyRelease)
             {
                 // Arrow keys to navigate the menu
-                if (Keyboard.GetState().IsKeyDown(Keys.Down))
+                if (Keyboard.GetState().IsKeyDown(Keys.Down) && m_currentSelection != MenuState.Quit)
                 {
                     m_currentSelection = m_currentSelection + 1;
                     m_waitForKeyRelease = true;
                 }
-                if (Keyboard.GetState().IsKeyDown(Keys.Up))
+                if (Keyboard.GetState().IsKeyDown(Keys.Up) && m_currentSelection != MenuState.NewGame)
                 {
                     m_currentSelection = m_currentSelection - 1;
                     m_waitForKeyRelease = true;

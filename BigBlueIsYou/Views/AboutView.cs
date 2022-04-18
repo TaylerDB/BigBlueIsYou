@@ -8,7 +8,7 @@ namespace BigBlueIsYou
     public class AboutView : GameStateView
     {
         private SpriteFont m_font;
-        private const string MESSAGE = "*I* wrote this amazing game!";
+        private const string MESSAGE = "Tayler Baker wrote this amazing game!";
 
         public override void loadContent(ContentManager contentManager)
         {

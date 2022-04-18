@@ -45,8 +45,16 @@ namespace BigBlueIsYou
         {
             var texSquare = content.Load<Texture2D>("Images/square");
             var bigBlueSquare = content.Load<Texture2D>("Images/BigBlue");
+            var flag = content.Load<Texture2D>("Animations/flag");
+            var floor = content.Load<Texture2D>("Animations/floor");
+            var grass = content.Load<Texture2D>("Animations/grass");
             var hedge = content.Load<Texture2D>("Animations/hedge");
+            var lava = content.Load<Texture2D>("Animations/lava");
+            var rock = content.Load<Texture2D>("Animations/rock");
+
             var wall = content.Load<Texture2D>("Animations/wall");
+            var water = content.Load<Texture2D>("Animations/water");
+
 
             // TODO: Find why the getter is passing an empty string
             //string levelsString = levelsView.LevelsString;
@@ -145,14 +153,18 @@ namespace BigBlueIsYou
             {
                 for (int c = 0; c < col; c++)
                 {
+                    if (charTopArr[c, r] == 'g')
+                    {
+                        initializeGrass(grass, r, c);
+                    }
                     if (charTopArr[c, r] == 'h')
                     {
-                        initializeBorder(hedge, r, c);
+                        initializeHedge(hedge, r, c);
                     }
-                    //if (charBottomArr[c, r] == 'g')
-                    //{
-                    //    initializeObstacles(texSquare, r, c);
-                    //}
+                    if (charTopArr[c, r] == 'l')
+                    {
+                        initializeFloor(floor, r, c);
+                    }
                 }
             }
             
@@ -162,13 +174,25 @@ namespace BigBlueIsYou
             {
                 for (int c = 0; c < col; c++)
                 {
+                    if (charBottomArr[c, r] == 'a')
+                    {
+                        initializeWater(water, r, c);
+                    }
                     if (charBottomArr[c, r] == 'b')
                     {
                         initializeBigBlue(bigBlueSquare, r, c);
                     }
+                    if (charBottomArr[c, r] == 'f')
+                    {
+                        initializeFlag(flag, r, c);
+                    }
+                    if (charBottomArr[c, r] == 'r')
+                    {
+                        initializeRock(rock, r, c);
+                    }
                     if (charBottomArr[c, r] == 'w')
                     {
-                        initializeObstacles(wall, r, c);
+                        initializeWall(wall, r, c);
                     }
                 }
             }
@@ -223,7 +247,43 @@ namespace BigBlueIsYou
             m_sysRenderer.Remove(entity.Id);
         }
 
-        private void initializeBorder(Texture2D square, int x, int y)
+        private void initializeBigBlue(Texture2D square, int x, int y)
+        {
+            var proposed = BigBlue.create(square, x, y);
+            if (!m_sysCollision.collidesWithAny(proposed))
+            {
+                AddEntity(proposed);
+            }
+        }
+
+        private void initializeFlag(Texture2D square, int x, int y)
+        {
+            var proposed = Flag.create(square, x, y);
+            if (!m_sysCollision.collidesWithAny(proposed))
+            {
+                AddEntity(proposed);
+            }
+        }
+
+        private void initializeFloor(Texture2D square, int x, int y)
+        {
+            var proposed = Floor.create(square, x, y);
+            if (!m_sysCollision.collidesWithAny(proposed))
+            {
+                AddEntity(proposed);
+            }
+        }
+
+        private void initializeGrass(Texture2D square, int x, int y)
+        {
+            var proposed = Grass.create(square, x, y);
+            if (!m_sysCollision.collidesWithAny(proposed))
+            {
+                AddEntity(proposed);
+            }
+        }
+
+        private void initializeHedge(Texture2D square, int x, int y)
         {
             var proposed = Hedge.create(square, x, y);
             if (!m_sysCollision.collidesWithAny(proposed))
@@ -247,24 +307,43 @@ namespace BigBlueIsYou
             //}
         }
 
-        private void initializeObstacles(Texture2D square, int x, int y)
+        private void initializeLava(Texture2D square, int x, int y)
+        {
+            var proposed = Lava.create(square, x, y);
+            if (!m_sysCollision.collidesWithAny(proposed))
+            {
+                AddEntity(proposed);
+            }
+        }
+
+        private void initializeRock(Texture2D square, int x, int y)
+        {
+            var proposed = Rock.create(square, x, y);
+            if (!m_sysCollision.collidesWithAny(proposed))
+            {
+                AddEntity(proposed);
+            }
+        }
+
+        private void initializeWall(Texture2D square, int x, int y)
         {
             var proposed = Wall.create(square, x, y);
             if (!m_sysCollision.collidesWithAny(proposed))
             {
                 AddEntity(proposed);
             }
-
         }
 
-        private void initializeBigBlue(Texture2D square, int x, int y)
+        private void initializeWater(Texture2D square, int x, int y)
         {
-            var proposed = BigBlue.create(square, x, y);
+            var proposed = Water.create(square, x, y);
             if (!m_sysCollision.collidesWithAny(proposed))
             {
-                AddEntity(proposed);         
-            }            
+                AddEntity(proposed);
+            }
         }
+
+
 
         private Entity createFood(Texture2D square)
         {

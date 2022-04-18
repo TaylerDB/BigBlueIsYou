@@ -7,13 +7,13 @@ namespace Entities
     {
         public static Entity create(Texture2D square, int x, int y)
         {
-            var obstacle = new Entity();
+            var wall = new Entity();
 
-            obstacle.Add(new Components.Appearance(square, new Color(100, 100, 100), Color.Black));
-            obstacle.Add(new Components.Position(x, y));
-            obstacle.Add(new Components.Collision());
+            wall.Add(new Components.Appearance(square, new Color(105, 105, 105), Color.Black));
+            wall.Add(new Components.Position(x, y));
+            wall.Add(new Components.Collision());
 
-            return obstacle;
+            return wall;
         }
     }
 }

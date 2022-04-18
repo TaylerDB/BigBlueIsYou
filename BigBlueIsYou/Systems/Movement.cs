@@ -28,27 +28,26 @@ namespace Systems
         private void moveEntity(Entities.Entity entity, GameTime gameTime)
         {
             var movable = entity.GetComponent<Components.Movable>();
-            movable.elapsedInterval += (uint)gameTime.ElapsedGameTime.TotalMilliseconds;
-            if (movable.elapsedInterval >= movable.moveInterval)
+            //movable.elapsedInterval += (uint)gameTime.ElapsedGameTime.TotalMilliseconds;
+           
+            //movable.elapsedInterval -= movable.moveInterval;
+            switch (movable.facing)
             {
-                movable.elapsedInterval -= movable.moveInterval;
-                switch (movable.facing)
-                {
-                    case Components.Direction.Up:
-                        move(entity, 0, -1);
-                        break;
-                    case Components.Direction.Down:
-                        move(entity, 0, 1);
-                        break;
-                    case Components.Direction.Left:
-                        move(entity, -1, 0);
-                        break;
-                    case Components.Direction.Right:
-                        move(entity, 1, 0);
-                        break;
-                }
-                movable.facing = Components.Direction.Stopped;
+                case Components.Direction.Up:
+                    //if ()
+                    move(entity, 0, -1);
+                    break;
+                case Components.Direction.Down:
+                    move(entity, 0, 1);
+                    break;
+                case Components.Direction.Left:
+                    move(entity, -1, 0);
+                    break;
+                case Components.Direction.Right:
+                    move(entity, 1, 0);
+                    break;
             }
+            movable.facing = Components.Direction.Stopped;
         }
 
         private void move(Entities.Entity entity, int xIncrement, int yIncrement)
@@ -73,8 +72,12 @@ namespace Systems
 
             //
             // Update the front of the entity with the segment moving into the new spot
-            Point newFront = new Point(front.X + xIncrement, front.Y + yIncrement);
-            position.segments.Insert(0, newFront);
+            //var movable = findMovable(m_entities);
+            //if (movable.GetComponent<Components.Movable>().facing != Components.Direction.Stopped)
+            //{
+                Point newFront = new Point(front.X + xIncrement, front.Y + yIncrement);
+                position.segments.Insert(0, newFront);
+            //}
         }
     }
 }
