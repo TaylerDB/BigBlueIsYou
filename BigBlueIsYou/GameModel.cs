@@ -33,6 +33,7 @@ namespace BigBlueIsYou
         char[,] charTopArr;
         char[,] charBottomArr;
 
+        private AnimatedSprite hedgeRenderer;
 
         public GameModel(int width, int height)
         {
@@ -44,7 +45,8 @@ namespace BigBlueIsYou
         {
             var texSquare = content.Load<Texture2D>("Images/square");
             var bigBlueSquare = content.Load<Texture2D>("Images/BigBlue");
-
+            var hedge = content.Load<Texture2D>("Animations/hedge");
+            var wall = content.Load<Texture2D>("Animations/wall");
 
             // TODO: Find why the getter is passing an empty string
             //string levelsString = levelsView.LevelsString;
@@ -145,7 +147,7 @@ namespace BigBlueIsYou
                 {
                     if (charTopArr[c, r] == 'h')
                     {
-                        initializeBorder(texSquare, r, c);
+                        initializeBorder(hedge, r, c);
                     }
                     //if (charBottomArr[c, r] == 'g')
                     //{
@@ -166,11 +168,17 @@ namespace BigBlueIsYou
                     }
                     if (charBottomArr[c, r] == 'w')
                     {
-                        initializeObstacles(texSquare, r, c);
+                        initializeObstacles(wall, r, c);
                     }
                 }
             }
-             
+
+            //// Setup centipede animation
+            //hedgeRenderer = new AnimatedSprite(
+            //    content.Load<Texture2D>("Animations/hedge"),
+            //    new int[] { 100, 100, 100}
+            //    );
+
             AddEntity(createFood(texSquare));
         }
 
@@ -196,6 +204,7 @@ namespace BigBlueIsYou
         public void Draw(GameTime gameTime)
         {
             m_sysRenderer.Update(gameTime);
+            //hedgeRenderer.draw(spriteBatch, Hedge);
         }
 
         private void AddEntity(Entity entity)
