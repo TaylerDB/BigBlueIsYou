@@ -17,6 +17,8 @@ namespace Components
         public uint moveInterval { get; private set; }
         public uint elapsedInterval = 0;
 
+        public bool canMoveUp = true;
+
         public Movable(Direction facing, uint moveInterval)
         {
             this.facing = facing;

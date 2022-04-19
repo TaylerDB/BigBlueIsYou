@@ -28,8 +28,9 @@ namespace Systems
         private void moveEntity(Entities.Entity entity, GameTime gameTime)
         {
             var movable = entity.GetComponent<Components.Movable>();
+            var collision = entity.GetComponent<Components.Collision>();
             //movable.elapsedInterval += (uint)gameTime.ElapsedGameTime.TotalMilliseconds;
-           
+
             //movable.elapsedInterval -= movable.moveInterval;
             switch (movable.facing)
             {
@@ -41,7 +42,10 @@ namespace Systems
                     move(entity, 0, 1);
                     break;
                 case Components.Direction.Left:
-                    move(entity, -1, 0);
+                    if (movable.canMoveUp)
+                    {
+                        move(entity, -1, 0);
+                    }
                     break;
                 case Components.Direction.Right:
                     move(entity, 1, 0);

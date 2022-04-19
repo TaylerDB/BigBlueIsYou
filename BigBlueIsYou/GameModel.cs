@@ -145,6 +145,7 @@ namespace BigBlueIsYou
                 // Need another food pill
                 m_addThese.Add(createFood(texSquare));
             });
+
             m_sysMovement = new Systems.Movement();
             m_sysKeyboardInput = new Systems.KeyboardInput();
 

@@ -28,6 +28,7 @@ namespace Systems
         public override void Update(GameTime gameTime)
         {
             var movable = findMovable(m_entities);
+            var stopable = findStopable(m_entities);
 
             foreach (var entity in m_entities.Values)
             {
@@ -42,10 +43,24 @@ namespace Systems
                             entityMovable.GetComponent<Components.Movable>().segmentsToAdd = 3;
                             m_foodConsumed(entity);
                         }
-                        else
-                        {
-                            entityMovable.GetComponent<Components.Movable>().facing = Components.Direction.Stopped;
-                        }
+
+                        //else
+                        //{
+                        //    entityMovable.GetComponent<Components.Movable>().facing = Components.Direction.Stopped;                            
+                        //}
+                    }
+                }
+
+                foreach (var entityStopable in stopable)
+                {
+                    if (collides(entity, entityStopable))
+                    {
+                        entityStopable.GetComponent<Components.Movable>().facing = Components.Direction.Stopped;
+                        entityStopable.GetComponent<Components.Movable>().canMoveUp = false;
+                    }
+                    else
+                    {
+                        entityStopable.GetComponent<Components.Movable>().canMoveUp = true;
                     }
                 }
             }
@@ -95,6 +110,25 @@ namespace Systems
 
             return movable;
         }
+
+        /// <summary>
+        /// Returns a collection of all the movable entities.
+        /// </summary>
+        private List<Entity> findStopable(Dictionary<uint, Entity> entities)
+        {
+            var stopable = new List<Entity>();
+
+            foreach (var entity in m_entities.Values)
+            {
+                if (entity.ContainsComponent<Components.Stopable>() && entity.ContainsComponent<Components.Position>())
+                {
+                    stopable.Add(entity);
+                }
+            }
+
+            return stopable;
+        }
+
         /// <summary>
         /// We know that only the snake is moving and that we only need
         /// to check its head for collision with other entities.  Therefore,

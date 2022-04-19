@@ -45,15 +45,18 @@ namespace Systems
 
                 // Get keyboard state
                 KeyboardState newState = Keyboard.GetState();
-
-                if (newState.IsKeyDown(Keys.Up))
+                if (movable.canMoveUp)
                 {
-                    if (!oldState.IsKeyDown(Keys.Up))
+
+                    if (newState.IsKeyDown(Keys.Up))
                     {
-                        movable.facing = Components.Direction.Up;
+                        if (!oldState.IsKeyDown(Keys.Up))
+                        {
+                            movable.facing = Components.Direction.Up;
+                        }
                     }
                 }
-
+                
                 if (newState.IsKeyDown(Keys.Down))
                 {
                     if (!oldState.IsKeyDown(Keys.Down))
@@ -70,14 +73,17 @@ namespace Systems
                     }
                 }
 
-                if (newState.IsKeyDown(Keys.Left))
+                if (movable.canMoveUp)
                 {
-                    if (!oldState.IsKeyDown(Keys.Left))
+                    if (newState.IsKeyDown(Keys.Left))
                     {
-                        movable.facing = Components.Direction.Left;
+                        if (!oldState.IsKeyDown(Keys.Left))
+                        {
+                            movable.facing = Components.Direction.Left;
+                        }
                     }
                 }
-
+                
 
                 // Update saved state
                 oldState = newState;
