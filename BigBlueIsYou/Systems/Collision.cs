@@ -51,18 +51,18 @@ namespace Systems
                     }
                 }
 
-                foreach (var entityStopable in stopable)
-                {
-                    if (collides(entity, entityStopable))
-                    {
-                        entityStopable.GetComponent<Components.Movable>().facing = Components.Direction.Stopped;
-                        entityStopable.GetComponent<Components.Movable>().canMoveUp = false;
-                    }
-                    else
-                    {
-                        entityStopable.GetComponent<Components.Movable>().canMoveUp = true;
-                    }
-                }
+                //foreach (var entityStopable in stopable)
+                //{
+                //    if (collides(entity, entityStopable))
+                //    {
+                //        entityStopable.GetComponent<Components.Movable>().facing = Components.Direction.Stopped;
+                //        entityStopable.GetComponent<Components.Movable>().CanMoveUp = false;
+                //    }
+                //    else
+                //    {
+                //        entityStopable.GetComponent<Components.Movable>().CanMoveUp = true;
+                //    }
+                //}
             }
         }
 

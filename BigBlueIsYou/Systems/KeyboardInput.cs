@@ -45,7 +45,7 @@ namespace Systems
 
                 // Get keyboard state
                 KeyboardState newState = Keyboard.GetState();
-                if (movable.canMoveUp)
+                if (movable.CanMoveUp)
                 {
 
                     if (newState.IsKeyDown(Keys.Up))
@@ -73,7 +73,7 @@ namespace Systems
                     }
                 }
 
-                if (movable.canMoveUp)
+                if (movable.CanMoveUp)
                 {
                     if (newState.IsKeyDown(Keys.Left))
                     {

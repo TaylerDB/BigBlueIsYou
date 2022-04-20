@@ -12,8 +12,7 @@ namespace Entities
 
             hedge.Add(new Components.Appearance(square, Color.Green, Color.Black));
             hedge.Add(new Components.Position(x, y));
-            hedge.Add(new Components.Collision());
-            hedge.Add(new Components.Movable(Components.Direction.Stopped, MOVE_INTERVAL));
+
             hedge.Add(new Components.Stopable());
 
 
