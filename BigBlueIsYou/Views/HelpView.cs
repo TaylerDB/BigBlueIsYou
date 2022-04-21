@@ -254,7 +254,7 @@ namespace BigBlueIsYou
                 {
                     try
                     {
-                        using (IsolatedStorageFileStream fs = storage.OpenFile("Controls.xml", FileMode.OpenOrCreate))
+                        using (IsolatedStorageFileStream fs = storage.OpenFile("Controls.xml", FileMode.Create))
                         {
                             if (fs != null)
                             {
