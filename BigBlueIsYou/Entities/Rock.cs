@@ -15,7 +15,7 @@ namespace Entities
             rock.Add(new Components.Position(x, y));
             rock.Add(new Components.Collision());
 
-            //rock.Add(new Components.Movable(Components.Direction.Stopped, MOVE_INTERVAL));
+            rock.Add(new Components.Movable(Components.Direction.Stopped, MOVE_INTERVAL));
 
             return rock;
         }

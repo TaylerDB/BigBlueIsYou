@@ -54,18 +54,16 @@ namespace Systems
 
                 // Get keyboard state
                 KeyboardState newState = Keyboard.GetState();
-                if (movable.canMoveUp)
-                {
 
-                    if (newState.IsKeyDown(Keys.Up))
+
+                if (newState.IsKeyDown(Keys.Up))
+                {
+                    if (!oldState.IsKeyDown(Keys.Up))
                     {
-                        if (!oldState.IsKeyDown(Keys.Up))
-                        {
-                            movable.facing = Components.Direction.Up;
-                        }
+                        movable.facing = Components.Direction.Up;
                     }
                 }
-
+                
                 if (newState.IsKeyDown(Keys.Down))
                 {
                     if (!oldState.IsKeyDown(Keys.Down))
@@ -82,16 +80,13 @@ namespace Systems
                     }
                 }
 
-                if (canMove)
+                if (newState.IsKeyDown(Keys.Left))
                 {
-                    if (newState.IsKeyDown(Keys.Left))
+                    if (!oldState.IsKeyDown(Keys.Left))
                     {
-                        if (!oldState.IsKeyDown(Keys.Left))
-                        {
-                            movable.facing = Components.Direction.Left;
-                        }
+                        movable.facing = Components.Direction.Left;
                     }
-                }
+                }                
 
                 // Update saved state
                 oldState = newState;
@@ -100,6 +95,7 @@ namespace Systems
 
         private void moveEntity(Entities.Entity entity, GameTime gameTime)
         {
+
             var movable = entity.GetComponent<Components.Movable>();
             var position = entity.GetComponent<Components.Position>();
             //var stopable = entity.GetComponent<Components.Stopable>();
@@ -163,7 +159,7 @@ namespace Systems
             //
             // Remember current front position, so it can be added back in as the move
             var front = position.segments[0];
-            
+
             //
             // Remove the tail, but only if there aren't new segments to add
             if (movable.segmentsToAdd == 0 && position.segments.Count > 0)
@@ -178,7 +174,9 @@ namespace Systems
             //
             // Update the front of the entity with the segment moving into the new spot
             //var movable = findMovable(m_entities);
-            
+
+            //foreach (Movement in entity)
+
             Point newFront = new Point(front.X + xIncrement, front.Y + yIncrement);
             position.segments.Insert(0, newFront);
 
