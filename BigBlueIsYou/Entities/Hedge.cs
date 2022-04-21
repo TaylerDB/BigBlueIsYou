@@ -13,8 +13,8 @@ namespace Entities
             hedge.Add(new Components.Appearance(square, Color.Green, Color.Black));
             hedge.Add(new Components.Position(x, y));
 
+            hedge.Add(new Components.Collision());
             hedge.Add(new Components.Stopable());
-
 
             return hedge;
         }

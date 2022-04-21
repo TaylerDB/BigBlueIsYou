@@ -17,7 +17,7 @@ namespace Components
         public uint moveInterval { get; private set; }
         public uint elapsedInterval = 0;
 
-        private bool canMoveUp = true;
+        public bool canMoveUp = true;
         public bool CanMoveUp 
         {
             get { return canMoveUp; }

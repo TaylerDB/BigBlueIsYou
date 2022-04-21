@@ -11,7 +11,8 @@ namespace Systems
         private Action<Entity> m_foodConsumed;
         public Collision(Action<Entity> foodConsumed)
             : base(
-                  typeof(Components.Position)
+                  typeof(Components.Position),
+                  typeof(Components.Collision)
                   )
         {
             this.m_foodConsumed = foodConsumed;
@@ -49,20 +50,20 @@ namespace Systems
                         //    entityMovable.GetComponent<Components.Movable>().facing = Components.Direction.Stopped;                            
                         //}
                     }
-                }
 
-                //foreach (var entityStopable in stopable)
-                //{
-                //    if (collides(entity, entityStopable))
-                //    {
-                //        entityStopable.GetComponent<Components.Movable>().facing = Components.Direction.Stopped;
-                //        entityStopable.GetComponent<Components.Movable>().CanMoveUp = false;
-                //    }
-                //    else
-                //    {
-                //        entityStopable.GetComponent<Components.Movable>().CanMoveUp = true;
-                //    }
-                //}
+                    foreach (var entitystopable in stopable)
+                    {
+                        if (collides(entityMovable, entitystopable))
+                        {
+                            entityMovable.GetComponent<Components.Movable>().facing = Components.Direction.Stopped;
+                            entityMovable.GetComponent<Components.Movable>().canMoveUp = false;
+                        }
+                        else
+                        {
+                            entityMovable.GetComponent<Components.Movable>().canMoveUp = true;
+                        }
+                    }
+                }
             }
         }
 

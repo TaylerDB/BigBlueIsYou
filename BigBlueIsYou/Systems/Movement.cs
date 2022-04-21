@@ -1,4 +1,5 @@
-﻿using Entities;
+﻿using BigBlueIsYou;
+using Entities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
@@ -15,11 +16,12 @@ namespace Systems
         KeyboardState oldState;
 
         bool canMove = true;
+        Entity[,] gameState;
 
         public Movement()
             : base(
                   typeof(Components.Movable),
-                  typeof(Components.Position)
+                  typeof(Components.Position)                  
                   )
         {
             oldState = Keyboard.GetState();
@@ -27,8 +29,9 @@ namespace Systems
 
         public override void Update(GameTime gameTime)
         {
+            gameState = GameLayout.GamePos;
             processInput();
-            collision();
+            //collision();
             foreach (var entity in m_entities.Values)
             {
                 moveEntity(entity, gameTime);
@@ -51,7 +54,7 @@ namespace Systems
 
                 // Get keyboard state
                 KeyboardState newState = Keyboard.GetState();
-                if (movable.CanMoveUp)
+                if (movable.canMoveUp)
                 {
 
                     if (newState.IsKeyDown(Keys.Up))
@@ -95,96 +98,58 @@ namespace Systems
             }
         }
 
-        private void collision()
-        {
-            //var movable = findMovable(m_entities);
-            var stopable = findStopable(m_entities);
-
-            foreach (var entity in m_entities.Values)
-            {
-
-                foreach (var entityStopable in stopable)
-                {
-                    if (collides(entity, entityStopable))
-                    {
-                        entityStopable.GetComponent<Components.Movable>().facing = Components.Direction.Stopped;
-                        canMove = false;
-                    }
-                    else
-                    {
-                        canMove = true;
-                    }
-                }
-            }
-        }
-
-        private List<Entity> findStopable(Dictionary<uint, Entity> entities)
-        {
-            var stopable = new List<Entity>();
-
-            foreach (var entity in m_entities.Values)
-            {
-                if (entity.ContainsComponent<Components.Stopable>() && entity.ContainsComponent<Components.Position>())
-                {
-                    stopable.Add(entity);
-                }
-            }
-
-            return stopable;
-        }
-
-        /// <summary>
-        /// We know that only the snake is moving and that we only need
-        /// to check its head for collision with other entities.  Therefore,
-        /// don't need to look at all the segments in the position, with the
-        /// exception of the movable itself...a movable can collide with itself.
-        /// </summary>
-        private bool collides(Entity a, Entity b)
-        {
-            var aPosition = a.GetComponent<Components.Position>();
-            var bPosition = b.GetComponent<Components.Position>();
-
-            //
-            // A movable can collide with itself: Check segment against the rest
-            if (a == b)
-            {
-                //
-                // Have to skip the first segment, that's why using a counted for loop
-                for (int segment = 1; segment < aPosition.segments.Count; segment++)
-                {
-                    if (aPosition.x == aPosition.segments[segment].X && aPosition.y == aPosition.segments[segment].Y)
-                    {
-                        return true;
-                    }
-                }
-
-                return false;
-            }
-
-            return aPosition.x == bPosition.x && aPosition.y == bPosition.y;
-        }
-
         private void moveEntity(Entities.Entity entity, GameTime gameTime)
         {
             var movable = entity.GetComponent<Components.Movable>();
+            var position = entity.GetComponent<Components.Position>();
+            //var stopable = entity.GetComponent<Components.Stopable>();
+            var front = position.segments[0];
 
             switch (movable.facing)
             {
                 case Components.Direction.Up:
-                    //if ()
-                    move(entity, 0, -1);
+                    if (gameState[front.X, front.Y - 1] == null || !gameState[front.X, front.Y - 1].ContainsComponent<Components.Stopable>())
+                    {
+                        // Add entity to new spot, clear previous spot
+                        gameState[front.X, front.Y - 1] = gameState[front.X, front.Y];
+                        gameState[front.X, front.Y] = null;
+
+                        move(entity, 0, -1);
+                    }
+
                     break;
                 case Components.Direction.Down:
-                    move(entity, 0, 1);
+                    if (gameState[front.X, front.Y + 1] == null || !gameState[front.X, front.Y + 1].ContainsComponent<Components.Stopable>())
+                    {
+                        // Add entity to new spot, clear previous spot
+                        gameState[front.X, front.Y + 1] = gameState[front.X, front.Y];
+                        gameState[front.X, front.Y] = null;
+
+                        move(entity, 0, 1);
+                    }
+
                     break;
                 case Components.Direction.Left:
-                    if (movable.CanMoveUp)
+                    if (gameState[front.X - 1, front.Y] == null || !gameState[front.X - 1, front.Y].ContainsComponent<Components.Stopable>())
                     {
+                        // Add entity to new spot, clear previous spot
+                        gameState[front.X - 1, front.Y] = gameState[front.X, front.Y];
+                        gameState[front.X, front.Y] = null;
+                        
                         move(entity, -1, 0);
                     }
+
                     break;
                 case Components.Direction.Right:
-                    move(entity, 1, 0);
+                    if (gameState[front.X + 1, front.Y] == null || !gameState[front.X + 1, front.Y].ContainsComponent<Components.Stopable>())
+                    {
+                        // Add entity to new spot, clear previous spot
+                        gameState[front.X + 1, front.Y] = gameState[front.X, front.Y];
+                        gameState[front.X, front.Y] = null;
+
+                        move(entity, 1, 0);
+                    }
+
                     break;
             }
             movable.facing = Components.Direction.Stopped;
@@ -198,7 +163,7 @@ namespace Systems
             //
             // Remember current front position, so it can be added back in as the move
             var front = position.segments[0];
-
+            
             //
             // Remove the tail, but only if there aren't new segments to add
             if (movable.segmentsToAdd == 0 && position.segments.Count > 0)
@@ -215,11 +180,8 @@ namespace Systems
             //var movable = findMovable(m_entities);
             
             Point newFront = new Point(front.X + xIncrement, front.Y + yIncrement);
-            //if (newFront != )
-            //{
+            position.segments.Insert(0, newFront);
 
-                position.segments.Insert(0, newFront);
-            //}
             
         }
     }

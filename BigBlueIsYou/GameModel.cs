@@ -33,7 +33,11 @@ namespace BigBlueIsYou
         char[,] charTopArr;
         char[,] charBottomArr;
 
+
+
         private AnimatedSprite hedgeRenderer;
+
+        //private
 
         public GameModel(int width, int height)
         {
@@ -89,6 +93,7 @@ namespace BigBlueIsYou
             row = Int32.Parse(levelDimensionString1);
             col = Int32.Parse(levelDimensionString2);
 
+            GameLayout.GamePos = new Entity[row, col];
             charTopArr = new char[row, col];
             charBottomArr = new char[row, col];
 
@@ -251,6 +256,9 @@ namespace BigBlueIsYou
         private void initializeBigBlue(Texture2D square, int x, int y)
         {
             var proposed = BigBlue.create(square, x, y);
+
+            GameLayout.addToGamePos(x, y, proposed);
+
             if (!m_sysCollision.collidesWithAny(proposed))
             {
                 AddEntity(proposed);
@@ -260,6 +268,9 @@ namespace BigBlueIsYou
         private void initializeFlag(Texture2D square, int x, int y)
         {
             var proposed = Flag.create(square, x, y);
+
+            GameLayout.addToGamePos(x, y, proposed);
+
             if (!m_sysCollision.collidesWithAny(proposed))
             {
                 AddEntity(proposed);
@@ -278,6 +289,7 @@ namespace BigBlueIsYou
         private void initializeGrass(Texture2D square, int x, int y)
         {
             var proposed = Grass.create(square, x, y);
+  
             if (!m_sysCollision.collidesWithAny(proposed))
             {
                 AddEntity(proposed);
@@ -287,30 +299,22 @@ namespace BigBlueIsYou
         private void initializeHedge(Texture2D square, int x, int y)
         {
             var proposed = Hedge.create(square, x, y);
+
+            GameLayout.addToGamePos(x, y, proposed);
+
             if (!m_sysCollision.collidesWithAny(proposed))
             {
                 AddEntity(proposed);
             }
 
-            //for (int position = 0; position < GRID_SIZE; position++)
-            //{
-            //    var left = BorderBlock.create(square, 0, position);
-            //    AddEntity(left);
-
-            //    var right = BorderBlock.create(square, GRID_SIZE - 1, position);
-            //    AddEntity(right);
-
-            //    var top = BorderBlock.create(square, position, 0);
-            //    AddEntity(top);
-
-            //    var bottom = BorderBlock.create(square, position, GRID_SIZE - 1);
-            //    AddEntity(bottom);
-            //}
         }
 
         private void initializeLava(Texture2D square, int x, int y)
         {
             var proposed = Lava.create(square, x, y);
+
+            GameLayout.addToGamePos(x, y, proposed);
+
             if (!m_sysCollision.collidesWithAny(proposed))
             {
                 AddEntity(proposed);
@@ -320,6 +324,9 @@ namespace BigBlueIsYou
         private void initializeRock(Texture2D square, int x, int y)
         {
             var proposed = Rock.create(square, x, y);
+
+            GameLayout.addToGamePos(x, y, proposed);
+
             if (!m_sysCollision.collidesWithAny(proposed))
             {
                 AddEntity(proposed);
@@ -329,6 +336,9 @@ namespace BigBlueIsYou
         private void initializeWall(Texture2D square, int x, int y)
         {
             var proposed = Wall.create(square, x, y);
+
+            GameLayout.addToGamePos(x, y, proposed);
+
             if (!m_sysCollision.collidesWithAny(proposed))
             {
                 AddEntity(proposed);
@@ -338,6 +348,9 @@ namespace BigBlueIsYou
         private void initializeWater(Texture2D square, int x, int y)
         {
             var proposed = Water.create(square, x, y);
+
+            GameLayout.addToGamePos(x, y, proposed);
+
             if (!m_sysCollision.collidesWithAny(proposed))
             {
                 AddEntity(proposed);
