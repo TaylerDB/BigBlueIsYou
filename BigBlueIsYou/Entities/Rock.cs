@@ -5,8 +5,6 @@ namespace Entities
 {
     class Rock
     {
-        private const int MOVE_INTERVAL = 600; // milliseconds
-
         public static Entity create(Texture2D square, int x, int y)
         {
             var rock = new Entity();
@@ -15,7 +13,9 @@ namespace Entities
             rock.Add(new Components.Position(x, y));
             rock.Add(new Components.Collision());
 
-            rock.Add(new Components.Movable(Components.Direction.Stopped, MOVE_INTERVAL));
+            //rock.Add(new Components.Movable(Components.Direction.Stopped));
+
+            rock.Add(new Components.Pushable());
 
             return rock;
         }

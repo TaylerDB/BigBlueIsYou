@@ -5,7 +5,6 @@ namespace Entities
 {
     public class Wall
     {
-        private const int MOVE_INTERVAL = 600; // milliseconds
 
         public static Entity create(Texture2D square, int x, int y)
         {
@@ -15,9 +14,11 @@ namespace Entities
             wall.Add(new Components.Position(x, y));
             wall.Add(new Components.Collision());
 
-            //wall.Add(new Components.Stopable());
+            //wall.Add(new Components.Stoppable());
 
-            //wall.Add(new Components.Movable(Components.Direction.Stopped, MOVE_INTERVAL));
+            //wall.Add(new Components.Movable(Components.Direction.Stopped));
+
+            wall.Add(new Components.Pushable());
 
             return wall;
         }

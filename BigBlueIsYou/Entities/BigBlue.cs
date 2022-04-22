@@ -5,7 +5,6 @@ namespace Entities
 {
     public class BigBlue
     {
-        private const int MOVE_INTERVAL = 600; // milliseconds
         public static Entity create(Texture2D BigBlue, int x, int y)
         {
             var bigBlue = new Entity();
@@ -16,7 +15,7 @@ namespace Entities
             
             // add renderAnimated component/system
 
-            //bigBlue.Add(new Components.Movable(Components.Direction.Stopped, MOVE_INTERVAL));
+            bigBlue.Add(new Components.Movable(Components.Direction.Stopped));
             
             
 

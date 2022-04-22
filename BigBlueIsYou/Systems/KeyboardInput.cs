@@ -28,35 +28,23 @@ namespace Systems
                 var movable = entity.GetComponent<Components.Movable>();
                 var input = entity.GetComponent<Components.KeyboardControlled>();
 
-                //foreach (var key in Keyboard.GetState().GetPressedKeys())
-                //{
-                    //if (input.keys.ContainsKey(key))
-                    //{
-                        bool canTurn = true;
-                        // Protect agains turning back onto itself
-                        // BUG: Note the Keys are hardcoded here and if they are changed to
-                        //      something else in the game model when the snake entity is created
-                        //      those keys won't be recognized here.
-
-                        //if (newState.IsKeyDown(Keys.F2))
-                        //{
-                        //    if (!oldState.IsKeyDown(Keys.F2))
-                        //    {
+                bool canTurn = true;
+                // Protect agains turning back onto itself
+                // BUG: Note the Keys are hardcoded here and if they are changed to
+                //      something else in the game model when the snake entity is created
+                //      those keys won't be recognized here.
 
                 // Get keyboard state
                 KeyboardState newState = Keyboard.GetState();
-                if (movable.CanMoveUp)
-                {
 
-                    if (newState.IsKeyDown(Keys.Up))
+                if (newState.IsKeyDown(Keys.Up))
+                {
+                    if (!oldState.IsKeyDown(Keys.Up))
                     {
-                        if (!oldState.IsKeyDown(Keys.Up))
-                        {
-                            movable.facing = Components.Direction.Up;
-                        }
+                        movable.facing = Components.Direction.Up;
                     }
                 }
-                
+                               
                 if (newState.IsKeyDown(Keys.Down))
                 {
                     if (!oldState.IsKeyDown(Keys.Down))
@@ -73,27 +61,17 @@ namespace Systems
                     }
                 }
 
-                if (movable.CanMoveUp)
+                if (newState.IsKeyDown(Keys.Left))
                 {
-                    if (newState.IsKeyDown(Keys.Left))
+                    if (!oldState.IsKeyDown(Keys.Left))
                     {
-                        if (!oldState.IsKeyDown(Keys.Left))
-                        {
-                            movable.facing = Components.Direction.Left;
-                        }
+                        movable.facing = Components.Direction.Left;
                     }
                 }
                 
-
                 // Update saved state
                 oldState = newState;
 
-                        //if (canTurn)
-                        //{
-                        //    movable.facing = input.keys[key];
-                        //}
-                    //}
-                //}
             }
         }
     }

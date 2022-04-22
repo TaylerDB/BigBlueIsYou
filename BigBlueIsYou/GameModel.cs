@@ -49,17 +49,29 @@ namespace BigBlueIsYou
         {
             var texSquare = content.Load<Texture2D>("Images/square");
             var bigBlueSquare = content.Load<Texture2D>("Images/BigBlue");
-            var flag = content.Load<Texture2D>("Animations/flag");
-            var floor = content.Load<Texture2D>("Animations/floor");
-            var grass = content.Load<Texture2D>("Animations/grass");
-            var hedge = content.Load<Texture2D>("Animations/hedge");
-            var lava = content.Load<Texture2D>("Animations/lava");
-            var rock = content.Load<Texture2D>("Animations/rock");
+            var flagObject = content.Load<Texture2D>("Animations/flag");
+            var floorObject = content.Load<Texture2D>("Animations/floor");
+            var grassObject = content.Load<Texture2D>("Animations/grass");
+            var hedgeObject = content.Load<Texture2D>("Animations/hedge");
+            var lavaObject = content.Load<Texture2D>("Animations/lava");
+            var rockObject = content.Load<Texture2D>("Animations/rock");
+            var wallObject = content.Load<Texture2D>("Animations/wall");
+            var waterObject = content.Load<Texture2D>("Animations/water");
 
-            var wall = content.Load<Texture2D>("Animations/wall");
-            var water = content.Load<Texture2D>("Animations/water");
-
-
+            var bigBlueWord = content.Load<Texture2D>("Animations/word-baba");
+            var flagWord = content.Load<Texture2D>("Animations/word-flag");
+            var isWord = content.Load<Texture2D>("Animations/word-is");
+            var killWord = content.Load<Texture2D>("Animations/word-kill");
+            var lavaWord = content.Load<Texture2D>("Animations/word-lava");
+            var pushWord = content.Load<Texture2D>("Animations/word-push");
+            var rockWord = content.Load<Texture2D>("Animations/word-rock");
+            var sinkWord = content.Load<Texture2D>("Animations/word-sink");
+            var stopWord = content.Load<Texture2D>("Animations/word-stop");
+            var wallWord = content.Load<Texture2D>("Animations/word-wall");
+            var winWord = content.Load<Texture2D>("Animations/word-win");
+            var waterWord = content.Load<Texture2D>("Animations/word-water");
+            var youWord = content.Load<Texture2D>("Animations/word-you");
+            
             // TODO: Find why the getter is passing an empty string
             //string levelsString = levelsView.LevelsString;
             //int levelChoice = levelsView.CurrentSelection;
@@ -94,6 +106,18 @@ namespace BigBlueIsYou
             col = Int32.Parse(levelDimensionString2);
 
             GameLayout.GamePos = new Entity[row, col];
+
+            for (int r = 0; r < row; r++)
+            {
+                for (int c = 0; c < col; c++)
+                {
+                    var proposed = Grass.create(grassObject, r, c);
+                    GameLayout.addToGamePos(r, c, proposed);
+                }
+            }
+
+                
+
             charTopArr = new char[row, col];
             charBottomArr = new char[row, col];
 
@@ -161,15 +185,15 @@ namespace BigBlueIsYou
                 {
                     if (charTopArr[c, r] == 'g')
                     {
-                        initializeGrass(grass, r, c);
+                        initializeGrass(grassObject, r, c);
                     }
                     if (charTopArr[c, r] == 'h')
                     {
-                        initializeHedge(hedge, r, c);
+                        initializeHedge(hedgeObject, r, c);
                     }
                     if (charTopArr[c, r] == 'l')
                     {
-                        initializeFloor(floor, r, c);
+                        initializeFloor(floorObject, r, c);
                     }
                 }
             }
@@ -182,7 +206,7 @@ namespace BigBlueIsYou
                 {
                     if (charBottomArr[c, r] == 'a')
                     {
-                        initializeWater(water, r, c);
+                        initializeWater(waterObject, r, c);
                     }
                     if (charBottomArr[c, r] == 'b')
                     {
@@ -190,15 +214,15 @@ namespace BigBlueIsYou
                     }
                     if (charBottomArr[c, r] == 'f')
                     {
-                        initializeFlag(flag, r, c);
+                        initializeFlag(flagObject, r, c);
                     }
                     if (charBottomArr[c, r] == 'r')
                     {
-                        initializeRock(rock, r, c);
+                        initializeRock(rockObject, r, c);
                     }
                     if (charBottomArr[c, r] == 'w')
                     {
-                        initializeWall(wall, r, c);
+                        initializeWall(wallObject, r, c);
                     }
                 }
             }

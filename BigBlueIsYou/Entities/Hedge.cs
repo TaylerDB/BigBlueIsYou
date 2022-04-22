@@ -14,7 +14,7 @@ namespace Entities
             hedge.Add(new Components.Position(x, y));
 
             hedge.Add(new Components.Collision());
-            hedge.Add(new Components.Stopable());
+            hedge.Add(new Components.Stoppable());
 
             return hedge;
         }

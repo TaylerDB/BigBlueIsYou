@@ -50,19 +50,6 @@ namespace Systems
                         //    entityMovable.GetComponent<Components.Movable>().facing = Components.Direction.Stopped;                            
                         //}
                     }
-
-                    foreach (var entitystopable in stopable)
-                    {
-                        if (collides(entityMovable, entitystopable))
-                        {
-                            entityMovable.GetComponent<Components.Movable>().facing = Components.Direction.Stopped;
-                            entityMovable.GetComponent<Components.Movable>().canMoveUp = false;
-                        }
-                        else
-                        {
-                            entityMovable.GetComponent<Components.Movable>().canMoveUp = true;
-                        }
-                    }
                 }
             }
         }
@@ -121,7 +108,7 @@ namespace Systems
 
             foreach (var entity in m_entities.Values)
             {
-                if (entity.ContainsComponent<Components.Stopable>() && entity.ContainsComponent<Components.Position>())
+                if (entity.ContainsComponent<Components.Stoppable>() && entity.ContainsComponent<Components.Position>())
                 {
                     stopable.Add(entity);
                 }
