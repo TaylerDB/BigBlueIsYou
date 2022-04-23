@@ -11,7 +11,7 @@ namespace Entities
 
             flag.Add(new Components.Appearance(square, new Color(255, 255, 0), Color.Black));
             flag.Add(new Components.Position(x, y));
-            flag.Add(new Components.Collision());
+            //flag.Add(new Components.Collision());
 
             return flag;
         }

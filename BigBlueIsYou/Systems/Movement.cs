@@ -18,6 +18,8 @@ namespace Systems
         bool canMove = true;
         Entity[,] gameState;
 
+        int count = 0;
+
         public Movement()
             : base(
                   typeof(Components.Movable),
@@ -242,36 +244,76 @@ namespace Systems
                         
                     }
 
-                    // Check for Pushable
-                    if (gameState[front.X + 1, front.Y].ContainsComponent<Components.Pushable>() && !gameState[front.X + 2, front.Y].ContainsComponent<Components.Stoppable>())
+                    if (gameState[front.X + 1, front.Y].ContainsComponent<Components.Pushable>())
                     {
-                        var push = gameState[front.X + 1, front.Y].GetComponent<Components.Position>();
-                        var p = push.segments[0];
-
-                        // Move pushable over 1 spaces
-                        Point pFront = new Point(p.X + 1, p.Y);
-                        push.segments.Insert(0, pFront);
-
-                        // Remove tail
-                        push.segments.RemoveAt(push.segments.Count - 1);
-
-                        // Allows to be kept pushing
-                        var temp = gameState[front.X + 2, front.Y];
-                        gameState[front.X + 2, front.Y] = gameState[front.X + 1, front.Y];
-                        gameState[front.X + 1, front.Y] = temp;
-
-                        // Add entity to new spot, clear previous spot
-                        var temp2 = gameState[front.X + 1, front.Y];
-                        gameState[front.X + 1, front.Y] = gameState[front.X, front.Y];
-                        gameState[front.X, front.Y] = temp2;
+                        count = 0;
+                        int num = 1;
+                        findPushable(front, entity, num);
+                        
+                        //for (int i = 0; i < count; i++)
+                        //{
+                        //    movePushable(front, i);
+                            
+                        //}
 
                         move(entity, 1, 0);
-
                     }
 
                     break;
             }
             movable.facing = Components.Direction.Stopped;
+        }
+
+        bool findPushable(Point front, Entity entity, int num)
+        {
+            // Stoppable
+            if (gameState[front.X + num, front.Y].ContainsComponent<Components.Stoppable>())
+                return false;
+
+            // Is pushable
+            if (gameState[front.X + num, front.Y].ContainsComponent<Components.Pushable>())
+            {
+                count++;
+                return findPushable(front, entity, num + 1);
+            }
+
+            if (gameState[front.X + num, front.Y].ContainsComponent<Components.Empty>())
+            {
+                movePushable(front, entity, count);
+                return true;
+            }
+            //if (gameState[front.X + num, front.Y].ContainsComponent<Components.Pushable>())
+            //    return false;
+
+
+
+            return false;
+        }
+
+        void movePushable(Point front, Entity entity, int num)
+        {
+            //num -= 1;
+            var push = gameState[front.X + num, front.Y].GetComponent<Components.Position>();
+            var p = push.segments[0];
+
+            // Move pushable over 1 spaces
+            Point pFront = new Point(p.X + num, p.Y);
+            push.segments.Insert(0, pFront);
+
+            // Remove tail
+            push.segments.RemoveAt(push.segments.Count - 1);
+
+            // Allows to be kept pushing
+            var temp = gameState[front.X + (num +1), front.Y];
+            gameState[front.X + (num + 1), front.Y] = gameState[front.X + num, front.Y];
+            gameState[front.X + num, front.Y] = temp;
+
+            // Add entity to new spot, clear previous spot
+            var temp2 = gameState[front.X + num, front.Y];
+            gameState[front.X + num, front.Y] = gameState[front.X, front.Y];
+            gameState[front.X, front.Y] = temp2;
+
+            //move(entity, 1, 0);
         }
 
         private void move(Entities.Entity entity, int xIncrement, int yIncrement)

@@ -11,7 +11,7 @@ namespace Entities
 
             floor.Add(new Components.Appearance(square, new Color(50, 50, 50), Color.Black));
             floor.Add(new Components.Position(x, y));
-
+            floor.Add(new Components.Empty());
             return floor;
         }
     }

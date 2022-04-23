@@ -11,7 +11,7 @@ namespace Entities
 
             grass.Add(new Components.Appearance(square, new Color(0, 255, 0), Color.Black));
             grass.Add(new Components.Position(x, y));
-            
+            grass.Add(new Components.Empty());
             return grass;
         }
     }

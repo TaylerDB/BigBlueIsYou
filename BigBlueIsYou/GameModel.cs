@@ -224,6 +224,58 @@ namespace BigBlueIsYou
                     {
                         initializeWall(wallObject, r, c);
                     }
+                    if (charBottomArr[c, r] == 'W')
+                    {
+                        initializeText(wallWord, r, c);
+                    }
+                    if (charBottomArr[c, r] == 'R')
+                    {
+                        initializeText(rockWord, r, c);
+                    }
+                    if (charBottomArr[c, r] == 'F')
+                    {
+                        initializeText(flagWord, r, c);
+                    }
+                    if (charBottomArr[c, r] == 'B')
+                    {
+                        initializeText(bigBlueWord, r, c);
+                    }
+                    if (charBottomArr[c, r] == 'I')
+                    {
+                        initializeText(isWord, r, c);
+                    }
+                    if (charBottomArr[c, r] == 'S')
+                    {
+                        initializeText(stopWord, r, c);
+                    }
+                    if (charBottomArr[c, r] == 'P')
+                    {
+                        initializeText(pushWord, r, c);
+                    }
+                    if (charBottomArr[c, r] == 'V')
+                    {
+                        initializeText(lavaWord, r, c);
+                    }
+                    if (charBottomArr[c, r] == 'A')
+                    {
+                        initializeText(waterWord, r, c);
+                    }
+                    if (charBottomArr[c, r] == 'Y')
+                    {
+                        initializeText(youWord, r, c);
+                    }
+                    if (charBottomArr[c, r] == 'X')
+                    {
+                        initializeText(winWord, r, c);
+                    }
+                    if (charBottomArr[c, r] == 'N')
+                    {
+                        initializeText(sinkWord, r, c);
+                    }
+                    if (charBottomArr[c, r] == 'K')
+                    {
+                        initializeText(killWord, r, c);
+                    }
                 }
             }
 
@@ -348,6 +400,18 @@ namespace BigBlueIsYou
         private void initializeRock(Texture2D square, int x, int y)
         {
             var proposed = Rock.create(square, x, y);
+
+            GameLayout.addToGamePos(x, y, proposed);
+
+            if (!m_sysCollision.collidesWithAny(proposed))
+            {
+                AddEntity(proposed);
+            }
+        }
+
+        private void initializeText(Texture2D square, int x, int y)
+        {
+            var proposed = Text.create(square, x, y);
 
             GameLayout.addToGamePos(x, y, proposed);
 
