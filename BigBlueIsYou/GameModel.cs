@@ -107,15 +107,6 @@ namespace BigBlueIsYou
 
             GameLayout.GamePos = new Entity[row, col];
 
-            for (int r = 0; r < row; r++)
-            {
-                for (int c = 0; c < col; c++)
-                {
-                    var proposed = Grass.create(grassObject, r, c);
-                    GameLayout.addToGamePos(r, c, proposed);
-                }
-            }
-
                 
 
             charTopArr = new char[row, col];
@@ -172,7 +163,7 @@ namespace BigBlueIsYou
                 // Remove the existing food pill
                 m_removeThese.Add(entity);
                 // Need another food pill
-                m_addThese.Add(createFood(texSquare));
+                //m_addThese.Add(createFood(texSquare));
             });
 
             m_sysMovement = new Systems.Movement();
@@ -278,14 +269,6 @@ namespace BigBlueIsYou
                     }
                 }
             }
-
-            //// Setup centipede animation
-            //hedgeRenderer = new AnimatedSprite(
-            //    content.Load<Texture2D>("Animations/hedge"),
-            //    new int[] { 100, 100, 100}
-            //    );
-
-            AddEntity(createFood(texSquare));
         }
 
         public void Update(GameTime gameTime)
@@ -415,10 +398,10 @@ namespace BigBlueIsYou
 
             GameLayout.addToGamePos(x, y, proposed);
 
-            if (!m_sysCollision.collidesWithAny(proposed))
-            {
+            //if (!m_sysCollision.collidesWithAny(proposed))
+            //{
                 AddEntity(proposed);
-            }
+            //}
         }
 
         private void initializeWall(Texture2D square, int x, int y)
@@ -445,25 +428,5 @@ namespace BigBlueIsYou
             }
         }
 
-
-
-        private Entity createFood(Texture2D square)
-        {
-            MyRandom rnd = new MyRandom();
-            bool done = false;
-
-            while (!done)
-            {
-                int x = (int)rnd.nextRange(1, GRID_SIZE - 1);
-                int y = (int)rnd.nextRange(1, GRID_SIZE - 1);
-                var proposed = Food.create(square, x, y);
-                if (!m_sysCollision.collidesWithAny(proposed))
-                {
-                    return proposed;
-                }
-            }
-
-            return null;
-        }
     }
 }

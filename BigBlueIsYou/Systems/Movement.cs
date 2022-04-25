@@ -32,12 +32,14 @@ namespace Systems
         public override void Update(GameTime gameTime)
         {
             gameState = GameLayout.GamePos;
+            //var dir = Components.Direction;
+//            Components.Direction = dir;
             processInput();
             //collision();
-            foreach (var entity in m_entities.Values)
-            {
-                moveEntity(entity, gameTime);
-            }
+            //foreach (var entity in m_entities.Values)
+            //{
+            //    moveEntity(entity, gameTime, dir);
+            //}
         }
 
         private void processInput()
@@ -59,7 +61,10 @@ namespace Systems
                     foreach (var entity in m_entities.Values)
                     {
                         var movable = entity.GetComponent<Components.Movable>();
-                        movable.facing = Components.Direction.Up;
+                        //movable.facing = Components.Direction.Up;
+
+                        // TODO: move(entity, Components.Direction.Up);
+                        moveEntity(entity, Components.Direction.Up);
                     }
                 }
             }
@@ -71,7 +76,8 @@ namespace Systems
                     foreach (var entity in m_entities.Values)
                     {
                         var movable = entity.GetComponent<Components.Movable>();
-                        movable.facing = Components.Direction.Down;
+                        //movable.facing = Components.Direction.Down;
+                        moveEntity(entity, Components.Direction.Down);
                     }
                 }
             }
@@ -83,7 +89,8 @@ namespace Systems
                     foreach (var entity in m_entities.Values)
                     {
                         var movable = entity.GetComponent<Components.Movable>();
-                        movable.facing = Components.Direction.Right;
+                        //movable.facing = Components.Direction.Right;
+                        moveEntity(entity, Components.Direction.Right);
                     }
                 }
             }
@@ -95,7 +102,8 @@ namespace Systems
                     foreach (var entity in m_entities.Values)
                     {
                         var movable = entity.GetComponent<Components.Movable>();
-                        movable.facing = Components.Direction.Left;
+                        //movable.facing = Components.Direction.Left;
+                        moveEntity(entity, Components.Direction.Left);
                     }
                 }
             }                
@@ -104,248 +112,151 @@ namespace Systems
             oldState = newState;
         }
 
-        private void moveEntity(Entities.Entity entity, GameTime gameTime)
+        private bool moveEntity(Entities.Entity entity, Components.Direction dir)
         {
 
-            var movable = entity.GetComponent<Components.Movable>();
+            //var movable = entity.GetComponent<Components.Movable>();
             var position = entity.GetComponent<Components.Position>();
             //var stopable = entity.GetComponent<Components.Stopable>();
-            var front = position.segments[0];
+            var front = position;
 
-            switch (movable.facing)
+            switch (dir)
             {
                 case Components.Direction.Up:
-                    if (!gameState[front.X, front.Y - 1].ContainsComponent<Components.Stoppable>() && !gameState[front.X, front.Y - 1].ContainsComponent<Components.Pushable>())
+                    if (gameState[front.X, front.Y - 1] == null)
                     {
-                        // Add entity to new spot, clear previous spot
-                        var temp = gameState[front.X, front.Y - 1];
-                        gameState[front.X, front.Y - 1] = gameState[front.X, front.Y];
-                        gameState[front.X, front.Y] = temp;
-
                         move(entity, 0, -1);
+                        return true;
                     }
 
-                    // Check for Pushable
-                    if (gameState[front.X, front.Y - 1].ContainsComponent<Components.Pushable>() && !gameState[front.X, front.Y - 2].ContainsComponent<Components.Stoppable>())
+                    if (gameState[front.X, front.Y - 1].ContainsComponent<Components.Stoppable>())
                     {
-                        var push = gameState[front.X, front.Y - 1].GetComponent<Components.Position>();
-                        var p = push.segments[0];
+                        return false;
+                    }
 
-                        // Move pushable over 1 spaces
-                        Point pFront = new Point(p.X, p.Y - 1);
-                        push.segments.Insert(0, pFront);
+                    if (gameState[front.X, front.Y - 1].ContainsComponent<Components.Pushable>())
+                    {
+                        if (moveEntity(gameState[front.X, front.Y - 1], Components.Direction.Up))
+                        {
+                            move(entity, 0, -1);
+                            return true;
+                        }
+                        else
+                            return false;
 
-                        // Remove tail
-                        push.segments.RemoveAt(push.segments.Count - 1);
+                    }
 
-                        // Allows to be kept pushing
-                        var temp = gameState[front.X, front.Y - 2];
-                        gameState[front.X, front.Y - 2] = gameState[front.X, front.Y - 1];
-                        gameState[front.X, front.Y - 1] = temp;
-
-                        // Add entity to new spot, clear previous spot
-                        var temp2 = gameState[front.X, front.Y - 1];
-                        gameState[front.X, front.Y - 1] = gameState[front.X, front.Y];
-                        gameState[front.X, front.Y] = temp2;
-
-                        move(entity, 0, -1);
+                    if (gameState[front.X, front.Y - 1] != null || !gameState[front.X, front.Y - 1].ContainsComponent<Components.Stoppable>())
+                    {
+                        move(entity, 1, 0);
                     }
 
                     break;
 
                 case Components.Direction.Down:
-                    if (!gameState[front.X, front.Y + 1].ContainsComponent<Components.Stoppable>() && !gameState[front.X, front.Y + 1].ContainsComponent<Components.Pushable>())
+                    if (gameState[front.X, front.Y + 1] == null)
                     {
-                        // Add entity to new spot, clear previous spot
-                        var temp = gameState[front.X, front.Y + 1];
-                        gameState[front.X, front.Y + 1] = gameState[front.X, front.Y];
-                        gameState[front.X, front.Y] = temp;
-
                         move(entity, 0, 1);
+                        return true;
                     }
 
-                    // Check for Pushable
-                    if (gameState[front.X, front.Y + 1].ContainsComponent<Components.Pushable>() && !gameState[front.X, front.Y + 2].ContainsComponent<Components.Stoppable>())
+                    if (gameState[front.X, front.Y + 1].ContainsComponent<Components.Stoppable>())
                     {
-                        var push = gameState[front.X, front.Y + 1].GetComponent<Components.Position>();
-                        var p = push.segments[0];
+                        return false;
+                    }
 
-                        // Move pushable over 1 spaces
-                        Point pFront = new Point(p.X, p.Y + 1);
-                        push.segments.Insert(0, pFront);
+                    if (gameState[front.X, front.Y + 1].ContainsComponent<Components.Pushable>())
+                    {
+                        if (moveEntity(gameState[front.X, front.Y + 1], Components.Direction.Down))
+                        {
+                            move(entity, 0, 1);
+                            return true;
+                        }
+                        else
+                            return false;
 
-                        // Remove tail
-                        push.segments.RemoveAt(push.segments.Count - 1);
+                    }
 
-                        // Allows to be kept pushing
-                        var temp = gameState[front.X, front.Y + 2];
-                        gameState[front.X, front.Y + 2] = gameState[front.X, front.Y + 1];
-                        gameState[front.X, front.Y + 1] = temp;
-
-                        // Add entity to new spot, clear previous spot
-                        var temp2 = gameState[front.X, front.Y + 1];
-                        gameState[front.X, front.Y + 1] = gameState[front.X, front.Y];
-                        gameState[front.X, front.Y] = temp2;
-
-                        move(entity, 0, 1);
+                    if (gameState[front.X, front.Y + 1] != null || !gameState[front.X, front.Y + 1].ContainsComponent<Components.Stoppable>())
+                    {
+                        move(entity, 1, 0);
                     }
 
                     break;
 
                 case Components.Direction.Left:
-                    if (!gameState[front.X - 1, front.Y].ContainsComponent<Components.Stoppable>() && !gameState[front.X - 1, front.Y].ContainsComponent<Components.Pushable>())
+                    if (gameState[front.X - 1, front.Y] == null)
                     {
-                        // Add entity to new spot, clear previous spot
-                        var temp = gameState[front.X - 1, front.Y];
-                        gameState[front.X - 1, front.Y] = gameState[front.X, front.Y];
-                        gameState[front.X, front.Y] = temp;
-                        
                         move(entity, -1, 0);
+                        return true;
                     }
 
-                    // Check for Pushable
-                    if (gameState[front.X - 1, front.Y].ContainsComponent<Components.Pushable>() && !gameState[front.X - 2, front.Y].ContainsComponent<Components.Stoppable>())
+                    if (gameState[front.X - 1, front.Y].ContainsComponent<Components.Stoppable>())
                     {
-                        var push = gameState[front.X - 1, front.Y].GetComponent<Components.Position>();
-                        var p = push.segments[0];
+                        return false;
+                    }
 
-                        // Move pushable over 1 spaces
-                        Point pFront = new Point(p.X - 1, p.Y);
-                        push.segments.Insert(0, pFront);
+                    if (gameState[front.X - 1, front.Y].ContainsComponent<Components.Pushable>())
+                    {
+                        if (moveEntity(gameState[front.X - 1, front.Y], Components.Direction.Left))
+                        {
+                            move(entity, -1, 0);
+                            return true;
+                        }
+                        else
+                            return false;
+                    }
 
-                        // Remove tail
-                        push.segments.RemoveAt(push.segments.Count - 1);
-
-                        // Allows to be kept pushing
-                        var temp = gameState[front.X - 2, front.Y];
-                        gameState[front.X - 2, front.Y] = gameState[front.X - 1, front.Y];
-                        gameState[front.X - 1, front.Y] = temp;
-
-                        // Add entity to new spot, clear previous spot
-                        var temp2 = gameState[front.X - 1, front.Y];
-                        gameState[front.X - 1, front.Y] = gameState[front.X, front.Y];
-                        gameState[front.X, front.Y] = temp2;
-
-                        move(entity, -1, 0);
-
+                    if (gameState[front.X - 1, front.Y] != null || !gameState[front.X - 1, front.Y].ContainsComponent<Components.Stoppable>())
+                    {
+                        move(entity, 1, 0);
                     }
 
                     break;
 
                 case Components.Direction.Right:
-                    // Not stoppable of Pushable we can move
-                    if (!gameState[front.X + 1, front.Y].ContainsComponent<Components.Stoppable>() && !gameState[front.X + 1, front.Y].ContainsComponent<Components.Pushable>())
+                    if (gameState[front.X + 1, front.Y] == null)
                     {
-                        // Add entity to new spot, clear previous spot
-                        var temp = gameState[front.X + 1, front.Y];
-                        gameState[front.X + 1, front.Y] = gameState[front.X, front.Y];
-                        gameState[front.X, front.Y] = temp;
                         move(entity, 1, 0);
-                        
+                        return true;
+                    }
+                    
+                    if (gameState[front.X + 1, front.Y].ContainsComponent<Components.Stoppable>())
+                    {
+                        return false;
                     }
 
                     if (gameState[front.X + 1, front.Y].ContainsComponent<Components.Pushable>())
                     {
-                        count = 0;
-                        int num = 1;
-                        findPushable(front, entity, num);
-                        
-                        //for (int i = 0; i < count; i++)
-                        //{
-                        //    movePushable(front, i);
-                            
-                        //}
+                        if (moveEntity(gameState[front.X + 1, front.Y], Components.Direction.Right))
+                        {
+                            move(entity, 1, 0);
+                            return true;
+                        }
+                        else
+                            return false;
+                    }
 
+                    if (gameState[front.X + 1, front.Y] != null || !gameState[front.X + 1, front.Y].ContainsComponent<Components.Stoppable>())
+                    {
                         move(entity, 1, 0);
                     }
 
                     break;
             }
-            movable.facing = Components.Direction.Stopped;
-        }
-
-        bool findPushable(Point front, Entity entity, int num)
-        {
-            // Stoppable
-            if (gameState[front.X + num, front.Y].ContainsComponent<Components.Stoppable>())
-                return false;
-
-            // Is pushable
-            if (gameState[front.X + num, front.Y].ContainsComponent<Components.Pushable>())
-            {
-                count++;
-                return findPushable(front, entity, num + 1);
-            }
-
-            if (gameState[front.X + num, front.Y].ContainsComponent<Components.Empty>())
-            {
-                movePushable(front, entity, count);
-                return true;
-            }
-            //if (gameState[front.X + num, front.Y].ContainsComponent<Components.Pushable>())
-            //    return false;
-
-
 
             return false;
         }
 
-        void movePushable(Point front, Entity entity, int num)
-        {
-            //num -= 1;
-            var push = gameState[front.X + num, front.Y].GetComponent<Components.Position>();
-            var p = push.segments[0];
-
-            // Move pushable over 1 spaces
-            Point pFront = new Point(p.X + num, p.Y);
-            push.segments.Insert(0, pFront);
-
-            // Remove tail
-            push.segments.RemoveAt(push.segments.Count - 1);
-
-            // Allows to be kept pushing
-            var temp = gameState[front.X + (num +1), front.Y];
-            gameState[front.X + (num + 1), front.Y] = gameState[front.X + num, front.Y];
-            gameState[front.X + num, front.Y] = temp;
-
-            // Add entity to new spot, clear previous spot
-            var temp2 = gameState[front.X + num, front.Y];
-            gameState[front.X + num, front.Y] = gameState[front.X, front.Y];
-            gameState[front.X, front.Y] = temp2;
-
-            //move(entity, 1, 0);
-        }
-
         private void move(Entities.Entity entity, int xIncrement, int yIncrement)
         {
-            var movable = entity.GetComponent<Components.Movable>();
             var position = entity.GetComponent<Components.Position>();
-            //var stopable = entity.ContainsComponent<Components.Stopable>();
-            //
-            // Remember current front position, so it can be added back in as the move
-            var front = position.segments[0];
 
-            //
-            // Remove the tail, but only if there aren't new segments to add
-            if (movable.segmentsToAdd == 0 && position.segments.Count > 0)
-            {
-                position.segments.RemoveAt(position.segments.Count - 1);
-            }
-            else
-            {
-                movable.segmentsToAdd--;
-            }
+            gameState[position.X, position.Y] = null;
+            gameState[position.X + xIncrement, position.Y + yIncrement] = entity;
 
-            //
-            // Update the front of the entity with the segment moving into the new spot
-            //var movable = findMovable(m_entities);
-
-            //foreach (Movement in entity)
-
-            Point newFront = new Point(front.X + xIncrement, front.Y + yIncrement);
-            position.segments.Insert(0, newFront);
-
-            
+            position.X += xIncrement;
+            position.Y += yIncrement;
         }
     }
 }

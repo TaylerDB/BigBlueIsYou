@@ -15,7 +15,7 @@ namespace Entities
             
             // add renderAnimated component/system
 
-            bigBlue.Add(new Components.Movable(Components.Direction.Stopped));
+            bigBlue.Add(new Components.Movable());
             
             
 

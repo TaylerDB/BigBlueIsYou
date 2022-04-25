@@ -35,21 +35,21 @@ namespace Systems
             {
                 foreach (var entityMovable in movable)
                 {
-                    if (collides(entity, entityMovable))
-                    {
-                        //
-                        // If food, that's okay
-                        if (entity.ContainsComponent<Components.Food>())
-                        {
-                            entityMovable.GetComponent<Components.Movable>().segmentsToAdd = 3;
-                            m_foodConsumed(entity);
-                        }
+                    //if (collides(entity, entityMovable))
+                    //{
+                    //    //
+                    //    // If food, that's okay
+                    //    if (entity.ContainsComponent<Components.Food>())
+                    //    {
+                    //        entityMovable.GetComponent<Components.Movable>().segmentsToAdd = 3;
+                    //        m_foodConsumed(entity);
+                    //    }
 
-                        //else
-                        //{
-                        //    entityMovable.GetComponent<Components.Movable>().facing = Components.Direction.Stopped;                            
-                        //}
-                    }
+                    //    //else
+                    //    //{
+                    //    //    entityMovable.GetComponent<Components.Movable>().facing = Components.Direction.Stopped;                            
+                    //    //}
+                    //}
                 }
             }
         }
@@ -68,13 +68,6 @@ namespace Systems
                 {
                     var ePosition = entity.GetComponent<Components.Position>();
 
-                    foreach (var segment in ePosition.segments)
-                    {
-                        if (aPosition.x == segment.X && aPosition.y == segment.Y)
-                        {
-                            return true;
-                        }
-                    }
                 }
             }
 
@@ -123,29 +116,29 @@ namespace Systems
         /// don't need to look at all the segments in the position, with the
         /// exception of the movable itself...a movable can collide with itself.
         /// </summary>
-        private bool collides(Entity a, Entity b)
-        {
-            var aPosition = a.GetComponent<Components.Position>();
-            var bPosition = b.GetComponent<Components.Position>();
+        //private bool collides(Entity a, Entity b)
+        //{
+        //    var aPosition = a.GetComponent<Components.Position>();
+        //    var bPosition = b.GetComponent<Components.Position>();
 
-            //
-            // A movable can collide with itself: Check segment against the rest
-            if (a == b)
-            {
-                //
-                // Have to skip the first segment, that's why using a counted for loop
-                for (int segment = 1; segment < aPosition.segments.Count; segment++)
-                {
-                    if (aPosition.x == aPosition.segments[segment].X && aPosition.y == aPosition.segments[segment].Y)
-                    {
-                        return true;
-                    }
-                }
+        //    //
+        //    // A movable can collide with itself: Check segment against the rest
+        //    if (a == b)
+        //    {
+        //        //
+        //        // Have to skip the first segment, that's why using a counted for loop
+        //        for (int segment = 1; segment < aPosition.segments.Count; segment++)
+        //        {
+        //            if (aPosition.x == aPosition.segments[segment].X && aPosition.y == aPosition.segments[segment].Y)
+        //            {
+        //                return true;
+        //            }
+        //        }
 
-                return false;
-            }
+        //        return false;
+        //    }
 
-            return aPosition.x == bPosition.x && aPosition.y == bPosition.y;
-        }
+        //    return aPosition.x == bPosition.x && aPosition.y == bPosition.y;
+        //}
     }
 }

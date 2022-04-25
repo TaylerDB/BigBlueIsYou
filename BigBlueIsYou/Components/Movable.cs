@@ -12,12 +12,12 @@ namespace Components
 
     public class Movable : Component
     {
-        public Direction facing;
-        public uint segmentsToAdd = 0;
+        //public Direction facing;
+        //public uint segmentsToAdd = 0;
 
-        public Movable(Direction facing)
+        public Movable()
         {
-            this.facing = facing;
+            //this.facing = facing;
         }
     }
 }

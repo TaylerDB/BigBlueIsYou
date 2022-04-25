@@ -37,37 +37,37 @@ namespace Systems
                 // Get keyboard state
                 KeyboardState newState = Keyboard.GetState();
 
-                if (newState.IsKeyDown(Keys.Up))
-                {
-                    if (!oldState.IsKeyDown(Keys.Up))
-                    {
-                        movable.facing = Components.Direction.Up;
-                    }
-                }
+                //if (newState.IsKeyDown(Keys.Up))
+                //{
+                //    if (!oldState.IsKeyDown(Keys.Up))
+                //    {
+                //        movable.facing = Components.Direction.Up;
+                //    }
+                //}
                                
-                if (newState.IsKeyDown(Keys.Down))
-                {
-                    if (!oldState.IsKeyDown(Keys.Down))
-                    {
-                        movable.facing = Components.Direction.Down;
-                    }
-                }
+                //if (newState.IsKeyDown(Keys.Down))
+                //{
+                //    if (!oldState.IsKeyDown(Keys.Down))
+                //    {
+                //        movable.facing = Components.Direction.Down;
+                //    }
+                //}
 
-                if (newState.IsKeyDown(Keys.Right))
-                {
-                    if (!oldState.IsKeyDown(Keys.Right))
-                    {
-                        movable.facing = Components.Direction.Right;
-                    }
-                }
+                //if (newState.IsKeyDown(Keys.Right))
+                //{
+                //    if (!oldState.IsKeyDown(Keys.Right))
+                //    {
+                //        movable.facing = Components.Direction.Right;
+                //    }
+                //}
 
-                if (newState.IsKeyDown(Keys.Left))
-                {
-                    if (!oldState.IsKeyDown(Keys.Left))
-                    {
-                        movable.facing = Components.Direction.Left;
-                    }
-                }
+                //if (newState.IsKeyDown(Keys.Left))
+                //{
+                //    if (!oldState.IsKeyDown(Keys.Left))
+                //    {
+                //        movable.facing = Components.Direction.Left;
+                //    }
+                //}
                 
                 // Update saved state
                 oldState = newState;

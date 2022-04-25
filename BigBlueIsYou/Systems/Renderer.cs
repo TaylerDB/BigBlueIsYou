@@ -76,50 +76,46 @@ namespace Systems
                 // Reset animation timer
                 animationTimer = TimeSpan.FromMilliseconds(0);
 
+                // Increase to next animation frame
                 count++;
             }
 
-            //for (int segment = 0; segment < position.segments.Count; segment++)
-            //{
             int segment = 0;
-                area.X = OFFSET_X + position.segments[segment].X * CELL_SIZE;
-                area.Y = OFFSET_Y + position.segments[segment].Y * CELL_SIZE;
-                area.Width = CELL_SIZE;
-                area.Height = CELL_SIZE;
+            area.X = OFFSET_X + position.X * CELL_SIZE;
+            area.Y = OFFSET_Y + position.Y * CELL_SIZE;
+            area.Width = CELL_SIZE;
+            area.Height = CELL_SIZE;
 
-                size.Width = 24;
-                size.Height = 24;
+            size.Width = 24;
+            size.Height = 24;
 
-                m_spriteBatch.Draw(appearance.image, area, size, appearance.stroke);
+            m_spriteBatch.Draw(appearance.image, area, size, appearance.stroke);
 
-                if (appearance.image.Name == "Images/BigBlue")
-                {
-                    m_spriteBatch.Draw(appearance.image, area, appearance.stroke);
-                }
+            if (appearance.image.Name == "Images/BigBlue")
+            {
+                m_spriteBatch.Draw(appearance.image, area, appearance.stroke);
+            }
 
-                area.X = OFFSET_X + position.segments[segment].X * CELL_SIZE + 1;
-                area.Y = OFFSET_Y + position.segments[segment].Y * CELL_SIZE + 1;
-                area.Width = CELL_SIZE - 2;
-                area.Height = CELL_SIZE - 2;
-                float fraction = MathHelper.Min(segment / 30.0f, 1.0f);
-                var color = new Color(
-                    (int)lerp(appearance.fill.R, 0, fraction),
-                    (int)lerp(appearance.fill.G, 0, fraction),
-                    (int)lerp(appearance.fill.B, 255, fraction));
-                m_spriteBatch.Draw(appearance.image, area,size, color);
+            area.X = OFFSET_X + position.X * CELL_SIZE + 1;
+            area.Y = OFFSET_Y + position.Y * CELL_SIZE + 1;
+            area.Width = CELL_SIZE - 2;
+            area.Height = CELL_SIZE - 2;
+            float fraction = MathHelper.Min(segment / 30.0f, 1.0f);
+            var color = new Color(
+                (int)lerp(appearance.fill.R, 0, fraction),
+                (int)lerp(appearance.fill.G, 0, fraction),
+                (int)lerp(appearance.fill.B, 255, fraction));
+            m_spriteBatch.Draw(appearance.image, area,size, color);
 
-                if (appearance.image.Name == "Images/BigBlue")
-                {
-                    m_spriteBatch.Draw(appearance.image, area, appearance.stroke);
-                }
-
-            //}
+            if (appearance.image.Name == "Images/BigBlue")
+            {
+                m_spriteBatch.Draw(appearance.image, area, appearance.stroke);
+            }
         }
 
         private float lerp(float a, float b, float f)
         {
             return a + f * (b - a);
         }
-
     }
 }
