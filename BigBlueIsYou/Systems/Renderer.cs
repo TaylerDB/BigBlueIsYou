@@ -1,6 +1,7 @@
 ﻿using Entities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 
 namespace Systems
 {
@@ -13,6 +14,11 @@ namespace Systems
         private readonly int OFFSET_Y;
         private readonly SpriteBatch m_spriteBatch;
         private readonly Texture2D m_texBackground;
+
+        // Animation timer
+        TimeSpan animationTimer = TimeSpan.FromMilliseconds(0);
+        int count = 0;
+        Rectangle size = new Rectangle();
 
         public Renderer(SpriteBatch spriteBatch, Texture2D texBackGround, int width, int height, int gridSize) :
             base(typeof(Components.Appearance), typeof(Components.Position))
@@ -28,6 +34,9 @@ namespace Systems
         public override void Update(GameTime gameTime)
         {
             m_spriteBatch.Begin();
+
+            // Update animation timer
+            animationTimer += gameTime.ElapsedGameTime;
 
             //
             // Draw a blue background
@@ -48,14 +57,45 @@ namespace Systems
             var position = entity.GetComponent<Components.Position>();
             Rectangle area = new Rectangle();
 
-            for (int segment = 0; segment < position.segments.Count; segment++)
+            // Animation speed
+            if (animationTimer.TotalMilliseconds > 700)
             {
+                if (count == 2)
+                {
+                    // Reset back to the begining 
+                    size.X = 24;
+                    count = 0;
+                }
+
+                else
+                {
+                    // Move to the next frame
+                    size.X += 24;
+                }
+
+                // Reset animation timer
+                animationTimer = TimeSpan.FromMilliseconds(0);
+
+                count++;
+            }
+
+            //for (int segment = 0; segment < position.segments.Count; segment++)
+            //{
+            int segment = 0;
                 area.X = OFFSET_X + position.segments[segment].X * CELL_SIZE;
                 area.Y = OFFSET_Y + position.segments[segment].Y * CELL_SIZE;
                 area.Width = CELL_SIZE;
                 area.Height = CELL_SIZE;
 
-                m_spriteBatch.Draw(appearance.image, area, appearance.stroke);
+                size.Width = 24;
+                size.Height = 24;
+
+                m_spriteBatch.Draw(appearance.image, area, size, appearance.stroke);
+
+                if (appearance.image.Name == "Images/BigBlue")
+                {
+                    m_spriteBatch.Draw(appearance.image, area, appearance.stroke);
+                }
 
                 area.X = OFFSET_X + position.segments[segment].X * CELL_SIZE + 1;
                 area.Y = OFFSET_Y + position.segments[segment].Y * CELL_SIZE + 1;
@@ -66,8 +106,14 @@ namespace Systems
                     (int)lerp(appearance.fill.R, 0, fraction),
                     (int)lerp(appearance.fill.G, 0, fraction),
                     (int)lerp(appearance.fill.B, 255, fraction));
-                m_spriteBatch.Draw(appearance.image, area, color);
-            }
+                m_spriteBatch.Draw(appearance.image, area,size, color);
+
+                if (appearance.image.Name == "Images/BigBlue")
+                {
+                    m_spriteBatch.Draw(appearance.image, area, appearance.stroke);
+                }
+
+            //}
         }
 
         private float lerp(float a, float b, float f)

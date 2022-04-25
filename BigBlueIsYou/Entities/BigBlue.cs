@@ -9,7 +9,7 @@ namespace Entities
         {
             var bigBlue = new Entity();
             // rename to sprite - modify appearance to include time and number of sprites
-            bigBlue.Add(new Components.Appearance(BigBlue, Color.White, Color.Black));
+            bigBlue.Add(new Components.Appearance(BigBlue, Color.White, Color.White));
             bigBlue.Add(new Components.Position(x, y));
             bigBlue.Add(new Components.Collision());
             
