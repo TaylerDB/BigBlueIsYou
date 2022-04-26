@@ -291,6 +291,18 @@
 /processorParam:TextureFormat=Color
 /build:Images/BigBlue.png
 
+#begin Images/BigBlueBackGround.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Images/BigBlueBackGround.png
+
 #begin Images/square.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -303,6 +315,27 @@
 /processorParam:TextureFormat=Color
 /build:Images/square.png
 
-#begin Levels/levels-all.bbiy
-/copy:Levels/levels-all.bbiy
+#begin Music/blipSelect.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Music/blipSelect.wav
+
+#begin Music/horn.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Music/horn.wav
+
+#begin Music/Mii-Plaza.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Music/Mii-Plaza.mp3
+
+#begin Music/move.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Music/move.mp3
 

@@ -1,8 +1,12 @@
 ﻿using BigBlueIsYou;
 using Entities;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Input;
-using System.Collections.Generic;
+using Microsoft.Xna.Framework.Media;
+using System.Diagnostics;
+
 
 namespace Systems
 {
@@ -10,15 +14,21 @@ namespace Systems
     /// This system is responsible for handling the movement of any
     /// entity with a movable & position components.
     /// </summary>
+
     class Movement : System
     {
         // For key presses
         KeyboardState oldState;
 
+        HelpView helpView = new HelpView();
+
         bool canMove = true;
         Entity[,] gameState;
 
         int count = 0;
+
+        private SoundEffect m_move;
+        private SoundEffect m_horn;
 
         public Movement()
             : base(
@@ -29,84 +39,94 @@ namespace Systems
             oldState = Keyboard.GetState();
         }
 
+        public void LoadContent(ContentManager content)
+        {
+            m_move = content.Load<SoundEffect>("Music/blipSelect");
+            m_horn = content.Load<SoundEffect>("Music/horn");
+        }
+
         public override void Update(GameTime gameTime)
         {
             gameState = GameLayout.GamePos;
-            //var dir = Components.Direction;
-//            Components.Direction = dir;
+
             processInput();
-            //collision();
-            //foreach (var entity in m_entities.Values)
-            //{
-            //    moveEntity(entity, gameTime, dir);
-            //}
+
         }
 
         private void processInput()
         {
-            bool canTurn = true;
-            // Protect agains turning back onto itself
-            // BUG: Note the Keys are hardcoded here and if they are changed to
-            //      something else in the game model when the snake entity is created
-            //      those keys won't be recognized here.
-
             // Get keyboard state
             KeyboardState newState = Keyboard.GetState();
 
-
-            if (newState.IsKeyDown(Keys.Up))
+            if (newState.IsKeyDown(helpView.MoveUp))
             {
-                if (!oldState.IsKeyDown(Keys.Up))
+                if (!oldState.IsKeyDown(helpView.MoveUp))
                 {
+                    m_move.Play();
                     foreach (var entity in m_entities.Values)
                     {
-                        var movable = entity.GetComponent<Components.Movable>();
-                        //movable.facing = Components.Direction.Up;
-
-                        // TODO: move(entity, Components.Direction.Up);
                         moveEntity(entity, Components.Direction.Up);
                     }
                 }
             }
                 
-            if (newState.IsKeyDown(Keys.Down))
+            if (newState.IsKeyDown(helpView.MoveDown))
             {
-                if (!oldState.IsKeyDown(Keys.Down))
+                if (!oldState.IsKeyDown(helpView.MoveDown))
                 {
+                    m_move.Play();
                     foreach (var entity in m_entities.Values)
                     {
-                        var movable = entity.GetComponent<Components.Movable>();
-                        //movable.facing = Components.Direction.Down;
                         moveEntity(entity, Components.Direction.Down);
                     }
                 }
             }
 
-            if (newState.IsKeyDown(Keys.Right))
+            if (newState.IsKeyDown(helpView.MoveRight))
             {
-                if (!oldState.IsKeyDown(Keys.Right))
+                if (!oldState.IsKeyDown(helpView.MoveRight))
                 {
+                    m_move.Play();
                     foreach (var entity in m_entities.Values)
                     {
                         var movable = entity.GetComponent<Components.Movable>();
-                        //movable.facing = Components.Direction.Right;
                         moveEntity(entity, Components.Direction.Right);
                     }
                 }
             }
 
-            if (newState.IsKeyDown(Keys.Left))
+            if (newState.IsKeyDown(helpView.MoveLeft))
             {
-                if (!oldState.IsKeyDown(Keys.Left))
+                if (!oldState.IsKeyDown(helpView.MoveLeft))
                 {
+                    m_move.Play();
                     foreach (var entity in m_entities.Values)
                     {
                         var movable = entity.GetComponent<Components.Movable>();
-                        //movable.facing = Components.Direction.Left;
                         moveEntity(entity, Components.Direction.Left);
                     }
                 }
-            }                
+            }
+
+            if (newState.IsKeyDown(Keys.R))
+            {
+                if (!oldState.IsKeyDown(Keys.R))
+                {
+                    for (int r = 0; r < 20; r++)
+                    {
+                        for (int c = 0; c < 20; c++)
+                        {
+                            if (gameState[r, c] != null)
+                            {
+                                if (gameState[r, c].Id == 118)
+                                {
+                                    Debug.WriteLine(r + " " + c);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
 
             // Update saved state
             oldState = newState;
@@ -117,7 +137,7 @@ namespace Systems
 
             //var movable = entity.GetComponent<Components.Movable>();
             var position = entity.GetComponent<Components.Position>();
-            //var stopable = entity.GetComponent<Components.Stopable>();
+            var stopable = entity.GetComponent<Components.Appearance>();
             var front = position;
 
             switch (dir)
@@ -125,6 +145,14 @@ namespace Systems
                 case Components.Direction.Up:
                     if (gameState[front.X, front.Y - 1] == null)
                     {
+                        move(entity, 0, -1);
+                        return true;
+                    }
+
+                    // Check for winning
+                    if (gameState[front.X, front.Y - 1].ContainsComponent<Components.Win>())
+                    {
+                        m_horn.Play();
                         move(entity, 0, -1);
                         return true;
                     }
@@ -143,12 +171,11 @@ namespace Systems
                         }
                         else
                             return false;
-
                     }
 
                     if (gameState[front.X, front.Y - 1] != null || !gameState[front.X, front.Y - 1].ContainsComponent<Components.Stoppable>())
                     {
-                        move(entity, 1, 0);
+                        move(entity, 0, -1);
                     }
 
                     break;
@@ -156,6 +183,14 @@ namespace Systems
                 case Components.Direction.Down:
                     if (gameState[front.X, front.Y + 1] == null)
                     {
+                        move(entity, 0, 1);
+                        return true;
+                    }
+
+                    // Check for winning
+                    if (gameState[front.X, front.Y + 1].ContainsComponent<Components.Win>())
+                    {
+                        m_horn.Play();
                         move(entity, 0, 1);
                         return true;
                     }
@@ -174,12 +209,11 @@ namespace Systems
                         }
                         else
                             return false;
-
                     }
 
                     if (gameState[front.X, front.Y + 1] != null || !gameState[front.X, front.Y + 1].ContainsComponent<Components.Stoppable>())
                     {
-                        move(entity, 1, 0);
+                        move(entity, 0, 1);
                     }
 
                     break;
@@ -187,6 +221,14 @@ namespace Systems
                 case Components.Direction.Left:
                     if (gameState[front.X - 1, front.Y] == null)
                     {
+                        move(entity, -1, 0);
+                        return true;
+                    }
+
+                    // Check for winning
+                    if (gameState[front.X - 1, front.Y].ContainsComponent<Components.Win>())
+                    {
+                        m_horn.Play();
                         move(entity, -1, 0);
                         return true;
                     }
@@ -209,7 +251,7 @@ namespace Systems
 
                     if (gameState[front.X - 1, front.Y] != null || !gameState[front.X - 1, front.Y].ContainsComponent<Components.Stoppable>())
                     {
-                        move(entity, 1, 0);
+                        move(entity, -1, 0);
                     }
 
                     break;
@@ -220,7 +262,15 @@ namespace Systems
                         move(entity, 1, 0);
                         return true;
                     }
-                    
+
+                    // Check for winning
+                    if (gameState[front.X + 1, front.Y].ContainsComponent<Components.Win>())
+                    {
+                        m_horn.Play();
+                        move(entity, 1, 0);
+                        return true;
+                    }
+
                     if (gameState[front.X + 1, front.Y].ContainsComponent<Components.Stoppable>())
                     {
                         return false;
@@ -252,7 +302,17 @@ namespace Systems
         {
             var position = entity.GetComponent<Components.Position>();
 
-            gameState[position.X, position.Y] = null;
+            //if (gameState[position.X, position.Y].GetComponent<Components.Position>() == null)
+            //{
+                gameState[position.X, position.Y] = null;
+            //}
+            //else if (gameState[position.X, position.Y].GetComponent<Components.Position>() != null)
+            //{
+            //    var temp = gameState[position.X, position.Y];
+            //    gameState[position.X, position.Y] = null;
+            //    gameState[position.X, position.Y] = temp;
+            //}
+
             gameState[position.X + xIncrement, position.Y + yIncrement] = entity;
 
             position.X += xIncrement;

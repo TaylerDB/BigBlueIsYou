@@ -1,7 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Media;
 
 namespace BigBlueIsYou
 {
@@ -10,10 +12,14 @@ namespace BigBlueIsYou
         private SpriteFont m_fontMenu;
         private SpriteFont m_fontMenuSelect;
 
+        private Texture2D m_bigBlueBackground;
+        private Rectangle m_bigRectange;
+
+        private Song m_music;
+
         private enum MenuState
         {
             NewGame,
-            HighScores,
             Help,
             About,
             Quit
@@ -28,6 +34,15 @@ namespace BigBlueIsYou
         {
             m_fontMenu = contentManager.Load<SpriteFont>("Fonts/menu");
             m_fontMenuSelect = contentManager.Load<SpriteFont>("Fonts/menu-select");
+
+            m_bigBlueBackground = contentManager.Load<Texture2D>("Images/BigBlueBackGround");
+            m_bigRectange = new Rectangle(0, 0, m_graphics.GraphicsDevice.Viewport.Width, m_graphics.GraphicsDevice.Viewport.Height);
+
+            m_music = contentManager.Load<Song>("Music/Mii-Plaza");
+
+            //MediaPlayer.Play(m_music);
+            //MediaPlayer.IsRepeating = true;
+
         }
         public override GameStateEnum processInput(GameTime gameTime)
         {
@@ -53,10 +68,6 @@ namespace BigBlueIsYou
                 {
                     return GameStateEnum.Levels;
                 }
-                if (Keyboard.GetState().IsKeyDown(Keys.Enter) && m_currentSelection == MenuState.HighScores)
-                {
-                    return GameStateEnum.HighScores;
-                }
                 if (Keyboard.GetState().IsKeyDown(Keys.Enter) && m_currentSelection == MenuState.Help)
                 {
                     return GameStateEnum.Help;
@@ -79,18 +90,25 @@ namespace BigBlueIsYou
         }
         public override void update(GameTime gameTime)
         {
+            //bool a = MediaPlayer.IsRepeating;
+
+            //if (a)
+            //{
+            //    MediaPlayer.Play(m_music);
+            //}
         }
         public override void render(GameTime gameTime)
         {
             m_spriteBatch.Begin();
 
+            m_spriteBatch.Draw(m_bigBlueBackground, m_bigRectange, Color.White);
+
             // I split the first one's parameters on separate lines to help you see them better
             float bottom = drawMenuItem(
                 m_currentSelection == MenuState.NewGame ? m_fontMenuSelect : m_fontMenu, 
                 "New Game",
-                200, 
+                100, 
                 m_currentSelection == MenuState.NewGame ? Color.Yellow : Color.Blue);
-            bottom = drawMenuItem(m_currentSelection == MenuState.HighScores ? m_fontMenuSelect : m_fontMenu, "High Scores", bottom, m_currentSelection == MenuState.HighScores ? Color.Yellow : Color.Blue);
             bottom = drawMenuItem(m_currentSelection == MenuState.Help ? m_fontMenuSelect : m_fontMenu, "Help", bottom, m_currentSelection == MenuState.Help ? Color.Yellow : Color.Blue);
             bottom = drawMenuItem(m_currentSelection == MenuState.About ? m_fontMenuSelect : m_fontMenu, "About", bottom, m_currentSelection == MenuState.About ? Color.Yellow : Color.Blue);
             drawMenuItem(m_currentSelection == MenuState.Quit ? m_fontMenuSelect : m_fontMenu, "Quit", bottom, m_currentSelection == MenuState.Quit ? Color.Yellow : Color.Blue);

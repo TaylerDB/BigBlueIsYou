@@ -34,7 +34,6 @@ namespace BigBlueIsYou
             m_states.Add(GameStateEnum.MainMenu, new MainMenuView());
             m_states.Add(GameStateEnum.Levels, new Views.LevelsView());
             m_states.Add(GameStateEnum.GamePlay, new GamePlayView());
-            m_states.Add(GameStateEnum.HighScores, new HighScoresView());
             m_states.Add(GameStateEnum.Help, new HelpView());
             m_states.Add(GameStateEnum.About, new AboutView());
 

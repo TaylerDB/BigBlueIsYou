@@ -12,12 +12,11 @@ namespace Entities
             bigBlue.Add(new Components.Appearance(BigBlue, Color.White, Color.White));
             bigBlue.Add(new Components.Position(x, y));
             bigBlue.Add(new Components.Collision());
-            
-            // add renderAnimated component/system
 
+            
             bigBlue.Add(new Components.Movable());
-            
-            
+
+
 
             return bigBlue;
         }

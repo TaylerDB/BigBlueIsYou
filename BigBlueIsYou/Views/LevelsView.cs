@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -15,6 +16,9 @@ namespace BigBlueIsYou.Views
         private SpriteFont m_fontMenu;
         private SpriteFont m_fontMenuSelect;
 
+        private Texture2D m_bigBlueBackground;
+        private Rectangle m_bigRectange;
+
         private const string MESSAGE = "Select a level you would like to play with 'S'";
         private bool m_waitForKeyRelease = false;
 
@@ -22,7 +26,7 @@ namespace BigBlueIsYou.Views
 
 
         private int m_currentSelection;
-        private string[] levelsArray;
+        private string levelsArray;
 
         public string levelsString;
         int levelCount;
@@ -50,6 +54,10 @@ namespace BigBlueIsYou.Views
             m_fontMenu = contentManager.Load<SpriteFont>("Fonts/menu");
             m_fontMenuSelect = contentManager.Load<SpriteFont>("Fonts/menu-select");
 
+            m_bigBlueBackground = contentManager.Load<Texture2D>("Images/BigBlueBackGround");
+            m_bigRectange = new Rectangle(0, 0, m_graphics.GraphicsDevice.Viewport.Width, m_graphics.GraphicsDevice.Viewport.Height);
+
+
             Debug.WriteLine("Attempting to find file");
 
             // Open file
@@ -62,25 +70,54 @@ namespace BigBlueIsYou.Views
             file.Close();
 
             // Get how many different levels are in file
-            string levelNumberString = "Level-";
+            //string levelNumberString = "Level-";
 
-            int j = 0;
+            //int j = 0;
+
+
+
+            string[] lines = levelsString.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+
+            for (int i = 0; i < lines.Length; i++)
+            {
+                //Debug.WriteLine("lines size " + lines.Length);
+                string selectedLevelString = lines[i];  // or safe: lines.ElementAtOrDefault(3)  
+                levelsList.Add(lines[i]);
+
+                selectedLevelString = lines[i + 1];
+                // Get first level dimension
+                int d1To = selectedLevelString.IndexOf(" ");
+                string levelDimensionStringX = selectedLevelString.Substring(0, d1To - 0);
+                //Debug.WriteLine("level dimension 1: " + levelDimensionString1);
+
+                // Get size of level 1 second dimension
+                int d2From = selectedLevelString.IndexOf("x ") + "x ".Length;
+                int d2To = selectedLevelString.Length; //IndexOf("\r\n ");
+                string levelDimensionStringY = selectedLevelString.Substring(d2From, d2To - d2From);
+                //Debug.WriteLine("level dimension 2: " + levelDimensionString2);
+
+                int col = Int32.Parse(levelDimensionStringY);
+
+                i += (col * 2) + 1;
+            }
+
+            //Debug.WriteLine(selectedLevelString);
 
             //string loadLevel;
-            while ((j = levelsString.IndexOf(levelNumberString, j)) != -1)
-            {
-                j += levelNumberString.Length;
-                levelCount++;
-            }
+            //while ((j = levelsString.IndexOf(levelNumberString, j)) != -1)
+            //{
+            //    j += levelNumberString.Length;
+            //    levelCount++;
+            //}
 
             Debug.WriteLine("Count: " + levelCount.ToString());
 
             // Add number of levels to levelsList
-            for (int i = 1; i <= levelCount; i++)
-            {
-                string addLevel = "Level " + i.ToString();
-                levelsList.Add(addLevel);
-            }
+            //for (int i = 1; i <= levelCount; i++)
+            //{
+            //    string addLevel = "Level " + i.ToString();
+            //    levelsList.Add(addLevel);
+            //}
         }
 
         public override GameStateEnum processInput(GameTime gameTime)
@@ -128,11 +165,13 @@ namespace BigBlueIsYou.Views
         {
             m_spriteBatch.Begin();
 
+            m_spriteBatch.Draw(m_bigBlueBackground, m_bigRectange, Color.White);
+
             Vector2 stringSize = m_fontMenu.MeasureString(MESSAGE);
             m_spriteBatch.DrawString(m_fontMenu, MESSAGE,
-                new Vector2(m_graphics.PreferredBackBufferWidth / 2 - stringSize.X / 2, 200 - stringSize.Y), Color.Blue);
+                new Vector2(m_graphics.PreferredBackBufferWidth / 2 - stringSize.X / 2, 100 - stringSize.Y), Color.Blue);
 
-            int yPos = 300;
+            int yPos = 200;
 
             foreach (var lev in levelsList)
             {

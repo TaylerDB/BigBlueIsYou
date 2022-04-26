@@ -9,6 +9,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Components;
+using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Media;
 
 namespace BigBlueIsYou
 {
@@ -26,6 +29,7 @@ namespace BigBlueIsYou
         private Systems.Collision m_sysCollision;
         private Systems.Movement m_sysMovement;
         private Systems.KeyboardInput m_sysKeyboardInput;
+        private Systems.Rules m_rules;
 
         int row;
         int col;
@@ -33,11 +37,7 @@ namespace BigBlueIsYou
         char[,] charTopArr;
         char[,] charBottomArr;
 
-
-
-        private AnimatedSprite hedgeRenderer;
-
-        //private
+        Texture2D rockObject;
 
         public GameModel(int width, int height)
         {
@@ -54,7 +54,7 @@ namespace BigBlueIsYou
             var grassObject = content.Load<Texture2D>("Animations/grass");
             var hedgeObject = content.Load<Texture2D>("Animations/hedge");
             var lavaObject = content.Load<Texture2D>("Animations/lava");
-            var rockObject = content.Load<Texture2D>("Animations/rock");
+            rockObject = content.Load<Texture2D>("Animations/rock");
             var wallObject = content.Load<Texture2D>("Animations/wall");
             var waterObject = content.Load<Texture2D>("Animations/water");
 
@@ -71,201 +71,358 @@ namespace BigBlueIsYou
             var winWord = content.Load<Texture2D>("Animations/word-win");
             var waterWord = content.Load<Texture2D>("Animations/word-water");
             var youWord = content.Load<Texture2D>("Animations/word-you");
-            
-            // TODO: Find why the getter is passing an empty string
-            //string levelsString = levelsView.LevelsString;
-            //int levelChoice = levelsView.CurrentSelection;
 
-            // Get level string minus Level-#
-            int thisLevel = levelChoice + 1;
-            int from = levelsString.IndexOf("Level-" + thisLevel.ToString() + "\r\n") + ("Level-" + thisLevel.ToString() + "\r\n").Length;
-            int nextLevel = thisLevel + 1;
-            int to = levelsString.IndexOf("Level-" + nextLevel.ToString());
-            string selectedLevelString = levelsString.Substring(from, to - from);
-            //Debug.WriteLine("result1: " + selectedLevelString);
+            string[] lines = levelsString.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
 
-            // Get first level dimension
-            int d1To = selectedLevelString.IndexOf(" ");
-            string levelDimensionString1 = selectedLevelString.Substring(0, d1To - 0);
-            Debug.WriteLine("level dimension 1: " + levelDimensionString1);
+            string levelDimensionStringX;
+            string levelDimensionStringY;
+            string[] actualLevel; // = new string[,];
+            string[] actualLevel2;
 
-            // Get size of level 1 second dimension
-            int d2From = selectedLevelString.IndexOf("x ") + "x ".Length;
-            int d2To = selectedLevelString.IndexOf("\r\n");
-            string levelDimensionString2 = selectedLevelString.Substring(d2From, d2To - d2From);
-            Debug.WriteLine("level dimension 2: " + levelDimensionString2);
+            string topLevel = "";
+            string bottomLevel = "";
 
-            // Get level by itself
-            int levelStart = selectedLevelString.IndexOf("\r\n") + "\r\n".Length;
-            int levelEnd = selectedLevelString.Length; //selectedLevelString.LastIndexOf(selectedLevelString);
-            string actualLevel = selectedLevelString.Substring(levelStart, levelEnd - levelStart);
-            //Debug.WriteLine("Actual Level:\n" + actualLevel);
+            int count = 0;
+            int it = 0;
+            for (int i = 0; i < lines.Length; i++)
+            {
+                //Debug.WriteLine("lines size " + lines.Length);
+                string selectedLevelString = lines[i];  // or safe: lines.ElementAtOrDefault(3)  
 
-            // Get row and col dimension of level
-            row = Int32.Parse(levelDimensionString1);
-            col = Int32.Parse(levelDimensionString2);
+                selectedLevelString = lines[i + 1];
+                // Get first level dimension
+                int d1To = selectedLevelString.IndexOf(" ");
+                levelDimensionStringX = selectedLevelString.Substring(0, d1To - 0);
+                //Debug.WriteLine("level dimension 1: " + levelDimensionString1);
+
+                // Get size of level 1 second dimension
+                int d2From = selectedLevelString.IndexOf("x ") + "x ".Length;
+                int d2To = selectedLevelString.Length; //IndexOf("\r\n ");
+                levelDimensionStringY = selectedLevelString.Substring(d2From, d2To - d2From);
+                //Debug.WriteLine("level dimension 2: " + levelDimensionString2);
+
+                col = Int32.Parse(levelDimensionStringY);
+                row = Int32.Parse(levelDimensionStringX);
+
+                if (count == levelChoice)
+                {
+                    it = i;
+                    break;
+                }
+                else
+                {
+                    count++;
+                }
+
+                i += (col * 2) + 1;
+            }
+
+            actualLevel = new string[row * 2];
+            actualLevel2 = new string[row];
+
+            for (int j = 0; j < row * 2; j++)
+            {
+                actualLevel[j] = lines[it + 2];
+                it++;
+            }
+
+            for (int k = 0; k < row; k++)
+            {
+                if ((it + 2) < lines.Length)
+                {
+                    actualLevel2[k] = lines[it + 2];
+                    it++;
+                }
+            }
+
+            for (int j = 0; j < row * 2; j++)
+            {
+                Debug.WriteLine(actualLevel[j]);
+                
+            }
 
             GameLayout.GamePos = new Entity[row, col];
 
-                
-
-            charTopArr = new char[row, col];
-            charBottomArr = new char[row, col];
-
-            string topLevel = actualLevel.Substring(0, actualLevel.Length / 2);
-            string bottomLevel = actualLevel.Substring(actualLevel.Length / 2, actualLevel.Length / 2);
-
-            Debug.WriteLine("topLevel:\n" + topLevel);
-            Debug.WriteLine("bottomLevel:\n" + bottomLevel);
-
             // Put topLevel in a 2d char array charTopArr
-            int t = 0;
-            for (int r = 0; r < row; r++)
-            {
-                for (int c = 0; c < col; c++)
-                {
-                    if (topLevel[t] == '\r' || topLevel[t] == '\n')
-                    { 
-                        t++;
-                        c--;
-                    }
-                    else
-                    {
-                        charTopArr[r, c] = topLevel[t];
-                        t++;
-                    }
-                }
-            }
-
-            // Put bottomLevel in a 2d char array charBottomArr
-            int b = 0;
-            for (int r = 0; r < row; r++)
-            {
-                for (int c = 0; c < col; c++)
-                {
-                    if (bottomLevel[b] == '\r' || bottomLevel[b] == '\n')
-                    {
-                        b++;
-                        c--;
-                    }
-                    else
-                    {
-                        charBottomArr[r, c] = bottomLevel[b];
-                        b++;
-                    }
-                }
-            }
-
+            char[][] charTopArr = actualLevel.Select(item => item.ToArray()).ToArray();
 
             m_sysRenderer = new Systems.Renderer(spriteBatch, texSquare, WINDOW_WIDTH, WINDOW_HEIGHT, GRID_SIZE);
             m_sysCollision = new Systems.Collision((entity) =>
             {
                 // Remove the existing food pill
                 m_removeThese.Add(entity);
-                // Need another food pill
-                //m_addThese.Add(createFood(texSquare));
             });
 
             m_sysMovement = new Systems.Movement();
             m_sysKeyboardInput = new Systems.KeyboardInput();
+            m_rules = new Systems.Rules();
 
-            // Add objects to topLevel
+            m_sysMovement.LoadContent(content);
+
+            // Add objects to level
             for (int r = 0; r < row; r++)
             {
-                for (int c = 0; c < col; c++)
+                for (int c = 0; c < (col * 2); c++)
                 {
-                    if (charTopArr[c, r] == 'g')
+                    if (charTopArr[c][r] == 'B')
                     {
-                        initializeGrass(grassObject, r, c);
-                    }
-                    if (charTopArr[c, r] == 'h')
-                    {
-                        initializeHedge(hedgeObject, r, c);
-                    }
-                    if (charTopArr[c, r] == 'l')
-                    {
-                        initializeFloor(floorObject, r, c);
-                    }
-                }
-            }
-            
+                        if (c > col)
+                        {
+                            int x = c - col;
 
-            // Add objects to bottomLevel
-            for (int r = 0; r < row; r++)
-            {
-                for (int c = 0; c < col; c++)
-                {
-                    if (charBottomArr[c, r] == 'a')
-                    {
-                        initializeWater(waterObject, r, c);
+                            initializeText(bigBlueWord, r, x);
+                        }
+                        else
+                            initializeText(bigBlueWord, r, c);
                     }
-                    if (charBottomArr[c, r] == 'b')
+
+                    if (charTopArr[c][r] == 'g')
                     {
-                        initializeBigBlue(bigBlueSquare, r, c);
+                        if (c > col)
+                        {
+                            int x = c - row;
+
+                            initializeGrass(grassObject, r, x);
+                        }
+                        else
+                            initializeGrass(grassObject, r, c);
                     }
-                    if (charBottomArr[c, r] == 'f')
+
+                    if (charTopArr[c][r] == 'h')
                     {
-                        initializeFlag(flagObject, r, c);
+                        if (c > col)
+                        {
+                            int x = c - row;
+
+                            initializeHedge(hedgeObject, r, x);
+                        }
+                        else
+                            initializeHedge(hedgeObject, r, c);
                     }
-                    if (charBottomArr[c, r] == 'r')
+
+                    if (charTopArr[c][r] == 'l')
                     {
-                        initializeRock(rockObject, r, c);
+                        if (c > col)
+                        {
+                            int x = c - col;
+
+                            initializeFloor(floorObject, r, x);
+                        }
+                        else
+                            initializeFloor(floorObject, r, c);
                     }
-                    if (charBottomArr[c, r] == 'w')
+                    
+                    if (charTopArr[c][r] == 'a')
                     {
-                        initializeWall(wallObject, r, c);
+                        if (c > col)
+                        {
+                            int x = c - col;
+
+                            initializeWater(waterObject, r, x);
+                        }
+                        else
+                            initializeWater(waterObject, r, c);
                     }
-                    if (charBottomArr[c, r] == 'W')
+
+                    if (charTopArr[c][r] == 'b')
                     {
-                        initializeText(wallWord, r, c);
+                        if (c > col)
+                        {
+                            int x = c - col;
+
+                            initializeBigBlue(bigBlueSquare, r, x);
+                        }
+                        else
+                            initializeBigBlue(bigBlueSquare, r, c);
                     }
-                    if (charBottomArr[c, r] == 'R')
+
+                    if (charTopArr[c][r] == 'f')
                     {
-                        initializeText(rockWord, r, c);
+                        if (c > col)
+                        {
+                            int x = c - col;
+
+                            initializeFlag(flagObject, r, x);
+                        }
+                        else
+                            initializeFlag(flagObject, r, c);
                     }
-                    if (charBottomArr[c, r] == 'F')
+
+                    if (charTopArr[c][r] == 'r')
                     {
-                        initializeText(flagWord, r, c);
+                        if (c > col)
+                        {
+                            int x = c - col;
+
+                            initializeRock(rockObject, r, x);
+                        }
+                        else
+                            initializeRock(rockObject, r, c);
                     }
-                    if (charBottomArr[c, r] == 'B')
+
+                    if (charTopArr[c][r] == 'v')
                     {
-                        initializeText(bigBlueWord, r, c);
+                        if (c > col)
+                        {
+                            int x = c - col;
+
+                            initializeLava(lavaObject, r, x);
+                        }
+                        else
+                            initializeLava(lavaObject, r, c);
                     }
-                    if (charBottomArr[c, r] == 'I')
+
+                    if (charTopArr[c][r] == 'w')
                     {
-                        initializeText(isWord, r, c);
+                        if (c > col)
+                        {
+                            int x = c - col;
+
+                            initializeWall(wallObject, r, x);
+                        }
+                        else
+                            initializeWall(wallObject, r, c);
                     }
-                    if (charBottomArr[c, r] == 'S')
+                    if (charTopArr[c][r] == 'W')
                     {
-                        initializeText(stopWord, r, c);
+                        if (c > col)
+                        {
+                            int x = c - col;
+
+                            initializeText(wallWord, r, x);
+                        }
+                        else
+                            initializeText(wallWord, r, c);
                     }
-                    if (charBottomArr[c, r] == 'P')
+                    if (charTopArr[c][r] == 'R')
                     {
-                        initializeText(pushWord, r, c);
+                        if (c > col)
+                        {
+                            int x = c - col;
+
+                            initializeText(rockWord, r, x);
+                        }
+                        else
+                            initializeText(rockWord, r, c);
                     }
-                    if (charBottomArr[c, r] == 'V')
+
+                    if (charTopArr[c][r] == 'F')
                     {
-                        initializeText(lavaWord, r, c);
+                        if (c > col)
+                        {
+                            int x = c - col;
+
+                            initializeText(flagWord, r, x);
+                        }
+                        else
+                            initializeText(flagWord, r, c);
                     }
-                    if (charBottomArr[c, r] == 'A')
+                    
+                    if (charTopArr[c][r] == 'I')
                     {
-                        initializeText(waterWord, r, c);
+                        if (c > col)
+                        {
+                            int x = c - col;
+
+                            initializeText(isWord, r, x);
+                        }
+                        else
+                            initializeText(isWord, r, c);
                     }
-                    if (charBottomArr[c, r] == 'Y')
+
+                    if (charTopArr[c][r] == 'S')
                     {
-                        initializeText(youWord, r, c);
+                        if (c > col)
+                        {
+                            int x = c - col;
+
+                            initializeText(stopWord, r, x);
+                        }
+                        else
+                            initializeText(stopWord, r, c);
                     }
-                    if (charBottomArr[c, r] == 'X')
+                    if (charTopArr[c][r] == 'P')
                     {
-                        initializeText(winWord, r, c);
+                        if (c > col)
+                        {
+                            int x = c - col;
+
+                            initializeText(pushWord, r, x);
+                        }
+                        else
+                            initializeText(pushWord, r, c);
                     }
-                    if (charBottomArr[c, r] == 'N')
+
+                    if (charTopArr[c][r] == 'V')
                     {
-                        initializeText(sinkWord, r, c);
+                        if (c > col)
+                        {
+                            int x = c - col;
+
+                            initializeText(lavaWord, r, x);
+                        }
+                        else
+                            initializeText(lavaWord, r, c);
                     }
-                    if (charBottomArr[c, r] == 'K')
+
+                    if (charTopArr[c][r] == 'A')
                     {
-                        initializeText(killWord, r, c);
+                        if (c > col)
+                        {
+                            int x = c - col;
+
+                            initializeText(waterWord, r, x);
+                        }
+                        else
+                            initializeText(waterWord, r, c);
+                    }
+
+                    if (charTopArr[c][r] == 'Y')
+                    {
+                        if (c > col)
+                        {
+                            int x = c - col;
+
+                            initializeText(youWord, r, x);
+                        }
+                        else
+                            initializeText(youWord, r, c);
+                    }
+
+                    if (charTopArr[c][r] == 'X')
+                    {
+                        if (c > col)
+                        {
+                            int x = c - col;
+
+                            initializeText(winWord, r, x);
+                        }
+                        else
+                            initializeText(winWord, r, c);
+                    }
+
+                    if (charTopArr[c][r] == 'N')
+                    {
+                        if (c > col)
+                        {
+                            int x = c - col;
+
+                            initializeText(sinkWord, r, x);
+                        }
+                        else
+                            initializeText(sinkWord, r, c);
+                    }
+
+                    if (charTopArr[c][r] == 'K')
+                    {
+                        if (c > col)
+                        {
+                            int x = c - col;
+
+                            initializeText(killWord, r, x);
+                        }
+                        else
+                            initializeText(killWord, r, c);
                     }
                 }
             }
@@ -276,6 +433,8 @@ namespace BigBlueIsYou
             m_sysKeyboardInput.Update(gameTime);
             m_sysMovement.Update(gameTime);
             m_sysCollision.Update(gameTime);
+            m_rules.Update(gameTime);
+
 
             foreach (var entity in m_removeThese)
             {
@@ -286,14 +445,15 @@ namespace BigBlueIsYou
             foreach (var entity in m_addThese)
             {
                 AddEntity(entity);
+                //rules(gameTime, entity);
             }
             m_addThese.Clear();
+
         }
 
         public void Draw(GameTime gameTime)
         {
             m_sysRenderer.Update(gameTime);
-            //hedgeRenderer.draw(spriteBatch, Hedge);
         }
 
         private void AddEntity(Entity entity)
@@ -302,6 +462,7 @@ namespace BigBlueIsYou
             m_sysMovement.Add(entity);
             m_sysCollision.Add(entity);
             m_sysRenderer.Add(entity);
+            m_rules.Add(entity);
         }
 
         private void RemoveEntity(Entity entity)
@@ -310,6 +471,7 @@ namespace BigBlueIsYou
             m_sysMovement.Remove(entity.Id);
             m_sysCollision.Remove(entity.Id);
             m_sysRenderer.Remove(entity.Id);
+            m_rules.Remove(entity.Id);
         }
 
         private void initializeBigBlue(Texture2D square, int x, int y)
@@ -382,6 +544,8 @@ namespace BigBlueIsYou
 
         private void initializeRock(Texture2D square, int x, int y)
         {
+            //bool push = false;
+
             var proposed = Rock.create(square, x, y);
 
             GameLayout.addToGamePos(x, y, proposed);
@@ -398,10 +562,10 @@ namespace BigBlueIsYou
 
             GameLayout.addToGamePos(x, y, proposed);
 
-            //if (!m_sysCollision.collidesWithAny(proposed))
-            //{
+            if (!m_sysCollision.collidesWithAny(proposed))
+            {
                 AddEntity(proposed);
-            //}
+            }
         }
 
         private void initializeWall(Texture2D square, int x, int y)

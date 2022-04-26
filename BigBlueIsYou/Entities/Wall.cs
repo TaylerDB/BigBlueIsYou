@@ -14,9 +14,9 @@ namespace Entities
             wall.Add(new Components.Position(x, y));
             wall.Add(new Components.Collision());
 
-            wall.Add(new Components.Stoppable());
+            //wall.Add(new Components.Stoppable());
 
-            //wall.Add(new Components.Movable(Components.Direction.Stopped));
+            //wall.Add(new Components.Movable());
 
             //wall.Add(new Components.Pushable());
 

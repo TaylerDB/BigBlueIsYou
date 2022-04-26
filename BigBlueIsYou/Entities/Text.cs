@@ -5,12 +5,21 @@ namespace Entities
 {
     class Text
     {
+        static string name;
+
+        public static string Name
+        {
+            get { return name; }
+            set { name = value; }
+        }
+
         public static Entity create(Texture2D square, int x, int y)
         {
             var text = new Entity();
             // White
             if (square.Name == "Animations/word-is" || square.Name == "Animations/word-baba")
             {
+                name = square.Name;
                 text.Add(new Components.Appearance(square, new Color(255, 255, 255), Color.Black));
             }
 
@@ -42,14 +51,13 @@ namespace Entities
                 text.Add(new Components.Appearance(square, new Color(255, 0, 255), Color.Black));
             }
 
-
-            if (square.Name == "Animations/word-lava")
+            // Red
+            if (square.Name == "Animations/word-lava" )
             {
-                text.Add(new Components.Appearance(square, new Color(100, 100, 100), Color.Black));
+                text.Add(new Components.Appearance(square, new Color(255, 0, 0), Color.Black));
             }
 
-            // Red
-            if (square.Name == "Animations/word-lava")
+            if (square.Name == "Animations/word-kill")
             {
                 text.Add(new Components.Appearance(square, new Color(255, 0, 0), Color.Black));
             }

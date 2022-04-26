@@ -19,6 +19,9 @@ namespace BigBlueIsYou
         private SpriteFont m_fontHelp;
         private SpriteFont m_fontHelpSelect;
 
+        private Texture2D m_bigBlueBackground;
+        private Rectangle m_bigRectange;
+
         private const string CONTROLS = "Controls:";
 
         // Strings that can be modified
@@ -32,6 +35,8 @@ namespace BigBlueIsYou
         private bool downKey = false;
         private bool leftKey = false;
         private bool rightKey = false;
+
+
 
 
         private enum ControlsState
@@ -89,6 +94,10 @@ namespace BigBlueIsYou
         {
             m_fontHelp = contentManager.Load<SpriteFont>("Fonts/menu");
             m_fontHelpSelect = contentManager.Load<SpriteFont>("Fonts/menu-select");
+
+            m_bigBlueBackground = contentManager.Load<Texture2D>("Images/BigBlueBackGround");
+            m_bigRectange = new Rectangle(0, 0, m_graphics.GraphicsDevice.Viewport.Width, m_graphics.GraphicsDevice.Viewport.Height);
+
 
             oldState = Keyboard.GetState();
 
@@ -337,6 +346,8 @@ namespace BigBlueIsYou
         public override void render(GameTime gameTime)
         {
             m_spriteBatch.Begin();
+
+            m_spriteBatch.Draw(m_bigBlueBackground, m_bigRectange, Color.White);
 
             // Controls text
             Vector2 stringSize = m_fontHelpSelect.MeasureString(CONTROLS);

@@ -89,12 +89,12 @@ namespace Systems
             size.Width = 24;
             size.Height = 24;
 
-            m_spriteBatch.Draw(appearance.image, area, size, appearance.stroke);
-
             if (appearance.image.Name == "Images/BigBlue")
             {
                 m_spriteBatch.Draw(appearance.image, area, appearance.stroke);
             }
+
+            m_spriteBatch.Draw(appearance.image, area, size, appearance.stroke);
 
             area.X = OFFSET_X + position.X * CELL_SIZE + 1;
             area.Y = OFFSET_Y + position.Y * CELL_SIZE + 1;
@@ -105,12 +105,14 @@ namespace Systems
                 (int)lerp(appearance.fill.R, 0, fraction),
                 (int)lerp(appearance.fill.G, 0, fraction),
                 (int)lerp(appearance.fill.B, 255, fraction));
-            m_spriteBatch.Draw(appearance.image, area,size, color);
 
             if (appearance.image.Name == "Images/BigBlue")
             {
                 m_spriteBatch.Draw(appearance.image, area, appearance.stroke);
             }
+
+            m_spriteBatch.Draw(appearance.image, area,size, color);
+
         }
 
         private float lerp(float a, float b, float f)
