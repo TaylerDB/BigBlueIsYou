@@ -16,18 +16,21 @@ namespace BigBlueIsYou
         /// <param name="down"></param>
         /// <param name="left"></param>
         /// <param name="right"></param>
-        /// <param name="shoot"></param>
-        public ControlSaveState(Keys up, Keys down, Keys left, Keys right)
+        /// <param name="reset"></param>
+        public ControlSaveState(Keys up, Keys down, Keys left, Keys right, Keys reset)
         {
             this.Up = up;
             this.Down = down;
             this.Left = left;
             this.Right = right;
+            this.Reset = reset;
+
         }
 
         public Keys Up { get; set; }
         public Keys Down { get; set; }
         public Keys Left { get; set; }
         public Keys Right { get; set; }
+        public Keys Reset { get; set; }
     }
 }

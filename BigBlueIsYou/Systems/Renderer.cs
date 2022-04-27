@@ -1,4 +1,5 @@
-﻿using BigBlueIsYou.Particles;
+﻿using BigBlueIsYou;
+using BigBlueIsYou.Particles;
 using Entities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -27,10 +28,10 @@ namespace Systems
         private ParticleEmitter m_emitter2;
         private ParticleEmitter m_emitter3;
 
-        int middleX;
-        int middleY;
+        int middleX = 500;
+        int middleY = 500;
 
-        const double fireRate = 1f;
+        const double fireRate = 2f;
         TimeSpan particleTimer = TimeSpan.FromSeconds(0);
 
         public Renderer(SpriteBatch spriteBatch, Texture2D texBackGround, int width, int height, int gridSize) :
@@ -71,32 +72,37 @@ namespace Systems
 
         public override void Update(GameTime gameTime)
         {
-            m_emitter1.update(gameTime);
-            m_emitter1.SourceX = 100;
-            m_emitter1.SourceY = 100;
-
-            m_emitter2.update(gameTime);
-            m_emitter2.SourceX = 200;
-            m_emitter2.SourceY = 200;
-
-            if (particleTimer.TotalSeconds < fireRate)
+            if (GameLayout.gameWin == true)
             {
-                particleTimer += gameTime.ElapsedGameTime;
-            }
+                Random r = new Random();
+                int x = r.Next(500, 900); //for ints
+                int y = r.Next(200, 700);
 
-            if (particleTimer.TotalSeconds > fireRate)
-            {
-                //down = false;
-                particleTimer = TimeSpan.FromSeconds(0);
-            }
+                m_emitter1.update(gameTime);
+                m_emitter1.SourceX = x;
+                m_emitter1.SourceY = y;
 
+                m_emitter2.update(gameTime);
+                m_emitter2.SourceX = x;
+                m_emitter2.SourceY = y;
+
+                if (particleTimer.TotalSeconds < fireRate)
+                {
+                    particleTimer += gameTime.ElapsedGameTime;
+                }
+
+                if (particleTimer.TotalSeconds > fireRate)
+                {
+                    GameLayout.gameWin = false;
+                    particleTimer = TimeSpan.FromSeconds(0);
+                }
+            }
             m_spriteBatch.Begin();
 
             // Update animation timer
             animationTimer += gameTime.ElapsedGameTime;
 
-            m_emitter1.draw(m_spriteBatch);
-            m_emitter2.draw(m_spriteBatch);
+
 
             //
             // Draw a blue background
@@ -106,6 +112,26 @@ namespace Systems
             foreach (var entity in m_entities.Values)
             {
                 renderEntity(entity);
+                
+                var appearance = entity.GetComponent<Components.Appearance>();
+                var position = entity.GetComponent<Components.Position>();
+                Rectangle area = new Rectangle();
+
+                area.X = OFFSET_X + position.X * CELL_SIZE;
+                area.Y = OFFSET_Y + position.Y * CELL_SIZE;
+                area.Width = CELL_SIZE;
+                area.Height = CELL_SIZE;
+
+                if (appearance.image.Name == "Images/BigBlue")
+                {
+                    m_spriteBatch.Draw(appearance.image, area, appearance.stroke);
+                }
+            }
+
+            if (GameLayout.gameWin == true)
+            {
+                m_emitter1.draw(m_spriteBatch);
+                m_emitter2.draw(m_spriteBatch);
             }
 
             m_spriteBatch.End();
@@ -149,10 +175,7 @@ namespace Systems
             size.Width = 24;
             size.Height = 24;
 
-            if (appearance.image.Name == "Images/BigBlue")
-            {
-                m_spriteBatch.Draw(appearance.image, area, appearance.stroke);
-            }
+
 
             m_spriteBatch.Draw(appearance.image, area, size, appearance.stroke);
             //m_emitter1.draw(m_spriteBatch);
@@ -168,10 +191,6 @@ namespace Systems
                 (int)lerp(appearance.fill.G, 0, fraction),
                 (int)lerp(appearance.fill.B, 255, fraction));
 
-            if (appearance.image.Name == "Images/BigBlue")
-            {
-                m_spriteBatch.Draw(appearance.image, area, appearance.stroke);
-            }
 
             m_spriteBatch.Draw(appearance.image, area,size, color);
 

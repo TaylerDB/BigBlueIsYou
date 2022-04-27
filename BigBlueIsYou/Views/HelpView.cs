@@ -29,12 +29,14 @@ namespace BigBlueIsYou
         private string S_MOVEDOWN = "Down";
         private string S_MOVELEFT = "Left";
         private string S_MOVERIGHT = "Right";
+        private string S_RESET = "R";
 
         private bool captureUserKey = false;
         private bool upKey = false;
         private bool downKey = false;
         private bool leftKey = false;
         private bool rightKey = false;
+        private bool resetKey = false;
 
 
 
@@ -44,7 +46,8 @@ namespace BigBlueIsYou
             Up,
             Down,
             Left,
-            Right
+            Right,
+            Reset
         }
 
         private ControlsState m_currentSelection = ControlsState.Up;
@@ -65,6 +68,7 @@ namespace BigBlueIsYou
         private static Keys V_MOVEDOWN = Keys.Down;
         private static Keys V_MOVELEFT = Keys.Left;
         private static Keys V_MOVERIGHT = Keys.Right;
+        private static Keys V_RESET = Keys.R;
 
         public Keys MoveUp
         {
@@ -88,6 +92,12 @@ namespace BigBlueIsYou
         {
             get { return V_MOVERIGHT; }
             set { V_MOVERIGHT = value; }
+        }
+
+        public Keys Reset
+        {
+            get { return V_RESET; }
+            set { V_RESET = value; }
         }
 
         public override void loadContent(ContentManager contentManager)
@@ -159,6 +169,14 @@ namespace BigBlueIsYou
                         rightKey = false;
                     }
 
+                    if (resetKey && userKey != Keys.Enter)
+                    {
+                        V_RESET = userKey;
+                        // Update string
+                        S_RESET = userKey.ToString();
+                        resetKey = false;
+                    }
+
                     saveSomething();
                 }
             }
@@ -166,7 +184,7 @@ namespace BigBlueIsYou
             if (!m_waitForKeyRelease)
             {
                 // Arrow keys to navigate the menu
-                if (Keyboard.GetState().IsKeyDown(Keys.Down) && m_currentSelection != ControlsState.Right && !enterPressed)
+                if (Keyboard.GetState().IsKeyDown(Keys.Down) && m_currentSelection != ControlsState.Reset && !enterPressed)
                 {
                     m_currentSelection = m_currentSelection + 1;
                     m_waitForKeyRelease = true;
@@ -223,13 +241,21 @@ namespace BigBlueIsYou
                     m_waitForKeyRelease = true;
                 }
 
+                if (Keyboard.GetState().IsKeyDown(Keys.Enter) && m_currentSelection == ControlsState.Reset)
+                {
+                    captureUserKey = true;
+                    resetKey = true;
+                    m_waitForKeyRelease = true;
+                }
+
                 // Update saved state
                 oldState = newState;
 
             }
 
             else if (Keyboard.GetState().IsKeyUp(Keys.Down) && Keyboard.GetState().IsKeyUp(Keys.Up)
-                    && Keyboard.GetState().IsKeyUp(Keys.Left) && Keyboard.GetState().IsKeyUp(Keys.Right))
+                    && Keyboard.GetState().IsKeyUp(Keys.Left) && Keyboard.GetState().IsKeyUp(Keys.Right)
+                    && Keyboard.GetState().IsKeyUp(Keys.R))
             {
                 m_waitForKeyRelease = false;
             }
@@ -249,7 +275,7 @@ namespace BigBlueIsYou
                     this.saving = true;
                     //
                     // Create something to save
-                    ControlSaveState myControlState = new ControlSaveState(V_MOVEUP, V_MOVEDOWN, V_MOVELEFT, V_MOVERIGHT);
+                    ControlSaveState myControlState = new ControlSaveState(V_MOVEUP, V_MOVEDOWN, V_MOVELEFT, V_MOVERIGHT, V_RESET);
                     finalizeSaveAsync(myControlState);
                 }
             }
@@ -324,11 +350,13 @@ namespace BigBlueIsYou
                                     V_MOVEDOWN = m_loadedState.Down;
                                     V_MOVELEFT = m_loadedState.Left;
                                     V_MOVERIGHT = m_loadedState.Right;
+                                    V_RESET = m_loadedState.Reset;
 
                                     S_MOVEUP = m_loadedState.Up.ToString();
                                     S_MOVEDOWN = m_loadedState.Down.ToString();
                                     S_MOVELEFT = m_loadedState.Left.ToString();
                                     S_MOVERIGHT = m_loadedState.Right.ToString();
+                                    S_RESET = m_loadedState.Reset.ToString();
                                 }
                             }
                         }
@@ -352,18 +380,19 @@ namespace BigBlueIsYou
             // Controls text
             Vector2 stringSize = m_fontHelpSelect.MeasureString(CONTROLS);
             m_spriteBatch.DrawString(m_fontHelpSelect, CONTROLS,
-                new Vector2(m_graphics.PreferredBackBufferWidth / 2 - stringSize.X / 2, m_graphics.PreferredBackBufferHeight / 5 - stringSize.Y), Color.Blue);
+                new Vector2(m_graphics.PreferredBackBufferWidth / 2 - stringSize.X / 2, m_graphics.PreferredBackBufferHeight / 7 - stringSize.Y), Color.Blue);
 
             // Draw selectable items
             float bottom = drawHelpItem(
                 m_currentSelection == ControlsState.Up ? m_fontHelpSelect : m_fontHelp,
                 "Move up - " + S_MOVEUP,
-                200,
+                150,
                 m_currentSelection == ControlsState.Up ? Color.Yellow : Color.Blue);
             bottom = drawHelpItem(m_currentSelection == ControlsState.Down ? m_fontHelpSelect : m_fontHelp, "Move down - " + S_MOVEDOWN, bottom, m_currentSelection == ControlsState.Down ? Color.Yellow : Color.Blue);
             bottom = drawHelpItem(m_currentSelection == ControlsState.Left ? m_fontHelpSelect : m_fontHelp, "Move left - " + S_MOVELEFT, bottom, m_currentSelection == ControlsState.Left ? Color.Yellow : Color.Blue);
-            drawHelpItem(m_currentSelection == ControlsState.Right ? m_fontHelpSelect : m_fontHelp, "Move right - " + S_MOVERIGHT, bottom, m_currentSelection == ControlsState.Right ? Color.Yellow : Color.Blue);
-            
+            bottom = drawHelpItem(m_currentSelection == ControlsState.Right ? m_fontHelpSelect : m_fontHelp, "Move right - " + S_MOVERIGHT, bottom, m_currentSelection == ControlsState.Right ? Color.Yellow : Color.Blue);
+            drawHelpItem(m_currentSelection == ControlsState.Reset ? m_fontHelpSelect : m_fontHelp, "Reset - " + S_RESET, bottom, m_currentSelection == ControlsState.Reset ? Color.Yellow : Color.Blue);
+
 
             m_spriteBatch.End();
         }

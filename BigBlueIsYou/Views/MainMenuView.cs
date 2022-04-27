@@ -40,8 +40,8 @@ namespace BigBlueIsYou
 
             m_music = contentManager.Load<Song>("Music/Mii-Plaza");
 
-            //MediaPlayer.Play(m_music);
-            //MediaPlayer.IsRepeating = true;
+            MediaPlayer.Play(m_music);
+            MediaPlayer.IsRepeating = true;
 
         }
         public override GameStateEnum processInput(GameTime gameTime)

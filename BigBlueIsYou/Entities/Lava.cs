@@ -13,6 +13,8 @@ namespace Entities
             lava.Add(new Components.Position(x, y));
             lava.Add(new Components.Collision());
 
+            lava.Add(new Components.Kill());
+
             return lava;
         }
     }

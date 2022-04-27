@@ -45,8 +45,25 @@ namespace BigBlueIsYou
             this.WINDOW_HEIGHT = height;
         }
 
+        private int a;
+        private int b;
+
+        public GameModel(GameModel gameModel)
+        {
+            a = gameModel.WINDOW_WIDTH;
+            b = gameModel.WINDOW_HEIGHT;
+        }
+        
+
         public void Initialize(ContentManager content, SpriteBatch spriteBatch, int levelChoice, string levelsString)
         {
+            GameLayout.windowWidth = WINDOW_WIDTH;
+            GameLayout.windowHeight = WINDOW_HEIGHT;
+            GameLayout.content = content;
+            GameLayout.spriteBatch = spriteBatch;
+            GameLayout.levelChoice = levelChoice;
+            GameLayout.levelsString = levelsString;
+
             var texSquare = content.Load<Texture2D>("Images/square");
             var bigBlueSquare = content.Load<Texture2D>("Images/BigBlue");
             var flagObject = content.Load<Texture2D>("Animations/flag");
@@ -135,12 +152,6 @@ namespace BigBlueIsYou
                 }
             }
 
-            for (int j = 0; j < row * 2; j++)
-            {
-                Debug.WriteLine(actualLevel[j]);
-                
-            }
-
             GameLayout.GamePos = new Entity[row, col];
 
             // Put topLevel in a 2d char array charTopArr
@@ -165,18 +176,6 @@ namespace BigBlueIsYou
             {
                 for (int c = 0; c < (col * 2); c++)
                 {
-                    if (charTopArr[c][r] == 'B')
-                    {
-                        if (c > col)
-                        {
-                            int x = c - col;
-
-                            initializeText(bigBlueWord, r, x);
-                        }
-                        else
-                            initializeText(bigBlueWord, r, c);
-                    }
-
                     if (charTopArr[c][r] == 'g')
                     {
                         if (c > col)
@@ -425,12 +424,26 @@ namespace BigBlueIsYou
                         else
                             initializeText(killWord, r, c);
                     }
+
+                    if (charTopArr[c][r] == 'B')
+                    {
+                        if (c > col)
+                        {
+                            int x = c - col;
+
+                            initializeText(bigBlueWord, r, x);
+                        }
+                        else
+                            initializeText(bigBlueWord, r, c);
+                    }
                 }
             }
         }
 
         public void Update(GameTime gameTime)
         {
+            GameLayout.gameTime = gameTime;
+
             m_sysKeyboardInput.Update(gameTime);
             m_sysMovement.Update(gameTime);
             m_sysCollision.Update(gameTime);

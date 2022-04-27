@@ -14,6 +14,16 @@ namespace BigBlueIsYou
         private int m_levelSelection;
         private string m_levelString;
 
+        public GamePlayView()
+        {
+
+        }
+
+        public GamePlayView(GamePlayView gamePlayView)
+        {
+            GameModel m_gameModel;
+        }
+
         public override void initializeSession()
         {
             m_gameModel = new GameModel(m_graphics.PreferredBackBufferWidth, m_graphics.PreferredBackBufferHeight);

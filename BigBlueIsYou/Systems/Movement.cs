@@ -21,6 +21,10 @@ namespace Systems
         KeyboardState oldState;
 
         HelpView helpView = new HelpView();
+        GamePlayView gamePlayView = new GamePlayView();
+
+        GameModel gameModel = new GameModel(GameLayout.windowWidth, GameLayout.windowHeight);
+        
 
         bool canMove = true;
         Entity[,] gameState;
@@ -48,12 +52,12 @@ namespace Systems
         public override void Update(GameTime gameTime)
         {
             gameState = GameLayout.GamePos;
-
-            processInput();
+            
+            processInput(gameTime);
 
         }
 
-        private void processInput()
+        private void processInput(GameTime gameTime)
         {
             // Get keyboard state
             KeyboardState newState = Keyboard.GetState();
@@ -62,7 +66,7 @@ namespace Systems
             {
                 if (!oldState.IsKeyDown(helpView.MoveUp))
                 {
-                    m_move.Play();
+                    m_move.Play(.3f, 1f, 0f);
                     foreach (var entity in m_entities.Values)
                     {
                         moveEntity(entity, Components.Direction.Up);
@@ -74,7 +78,7 @@ namespace Systems
             {
                 if (!oldState.IsKeyDown(helpView.MoveDown))
                 {
-                    m_move.Play();
+                    m_move.Play(.3f, 1f, 0f);
                     foreach (var entity in m_entities.Values)
                     {
                         moveEntity(entity, Components.Direction.Down);
@@ -86,7 +90,7 @@ namespace Systems
             {
                 if (!oldState.IsKeyDown(helpView.MoveRight))
                 {
-                    m_move.Play();
+                    m_move.Play(.3f, 1f, 0f);
                     foreach (var entity in m_entities.Values)
                     {
                         var movable = entity.GetComponent<Components.Movable>();
@@ -99,7 +103,8 @@ namespace Systems
             {
                 if (!oldState.IsKeyDown(helpView.MoveLeft))
                 {
-                    m_move.Play();
+                    m_move.Play(.3f, 1f, 0f);
+                    
                     foreach (var entity in m_entities.Values)
                     {
                         var movable = entity.GetComponent<Components.Movable>();
@@ -108,23 +113,16 @@ namespace Systems
                 }
             }
 
-            if (newState.IsKeyDown(Keys.R))
+            if (newState.IsKeyDown(helpView.Reset))
             {
-                if (!oldState.IsKeyDown(Keys.R))
+                if (!oldState.IsKeyDown(helpView.Reset))
                 {
-                    for (int r = 0; r < 20; r++)
-                    {
-                        for (int c = 0; c < 20; c++)
-                        {
-                            if (gameState[r, c] != null)
-                            {
-                                if (gameState[r, c].Id == 118)
-                                {
-                                    Debug.WriteLine(r + " " + c);
-                                }
-                            }
-                        }
-                    }
+                    Debug.WriteLine("r hit");
+                    GameModel gameModel2 = new GameModel(gameModel);
+                    gameModel2.Initialize(GameLayout.content, GameLayout.spriteBatch, GameLayout.levelChoice, GameLayout.levelsString);
+                    //gameModel2.Update(GameLayout.gameTime);
+                    //gameModel2.Draw(GameLayout.gameTime);
+
                 }
             }
 
@@ -153,6 +151,7 @@ namespace Systems
                     if (gameState[front.X, front.Y - 1].ContainsComponent<Components.Win>())
                     {
                         m_horn.Play();
+                        GameLayout.gameWin = true;
                         move(entity, 0, -1);
                         return true;
                     }
@@ -191,6 +190,7 @@ namespace Systems
                     if (gameState[front.X, front.Y + 1].ContainsComponent<Components.Win>())
                     {
                         m_horn.Play();
+                        GameLayout.gameWin = true;
                         move(entity, 0, 1);
                         return true;
                     }
@@ -229,9 +229,12 @@ namespace Systems
                     if (gameState[front.X - 1, front.Y].ContainsComponent<Components.Win>())
                     {
                         m_horn.Play();
+                        GameLayout.gameWin = true;
                         move(entity, -1, 0);
                         return true;
                     }
+
+
 
                     if (gameState[front.X - 1, front.Y].ContainsComponent<Components.Stoppable>())
                     {
@@ -267,8 +270,16 @@ namespace Systems
                     if (gameState[front.X + 1, front.Y].ContainsComponent<Components.Win>())
                     {
                         m_horn.Play();
+                        GameLayout.gameWin = true;
                         move(entity, 1, 0);
+                        //entity.Remove(new Components.Movable());
                         return true;
+                    }
+
+                    if (gameState[front.X + 1, front.Y].ContainsComponent<Components.Kill>())
+                    {
+                        //entity.Remove(new Components.Position(front.X, front.Y));
+                        //entity.Clear();
                     }
 
                     if (gameState[front.X + 1, front.Y].ContainsComponent<Components.Stoppable>())
