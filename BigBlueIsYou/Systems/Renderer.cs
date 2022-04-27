@@ -1,5 +1,7 @@
-﻿using Entities;
+﻿using BigBlueIsYou.Particles;
+using Entities;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 
@@ -20,6 +22,17 @@ namespace Systems
         int count = 0;
         Rectangle size = new Rectangle();
 
+        // For particles
+        private ParticleEmitter m_emitter1;
+        private ParticleEmitter m_emitter2;
+        private ParticleEmitter m_emitter3;
+
+        int middleX;
+        int middleY;
+
+        const double fireRate = 1f;
+        TimeSpan particleTimer = TimeSpan.FromSeconds(0);
+
         public Renderer(SpriteBatch spriteBatch, Texture2D texBackGround, int width, int height, int gridSize) :
             base(typeof(Components.Appearance), typeof(Components.Position))
         {
@@ -31,12 +44,59 @@ namespace Systems
             m_texBackground = texBackGround;
         }
 
+        public void LoadContent(ContentManager contentManager)
+        {
+            //
+            // For particles
+            //int middleX = m_graphics.GraphicsDevice.Viewport.Width / 2;
+            //int middleY = m_graphics.GraphicsDevice.Viewport.Height / 2;
+            m_emitter1 = new ParticleEmitter(
+                contentManager, // Content
+                new TimeSpan(0, 0, 0, 0, 1), // TimeSpan rate
+                middleX, middleY, // sourceX, sourceY
+                20, // size
+                1, // speed
+                new TimeSpan(0, 0, 0, 0, 400), // lifetime
+                new TimeSpan(0, 0, 0, 0, 200)); // wwitchover
+
+            m_emitter2 = new ParticleEmitter(
+                contentManager, // Content
+                new TimeSpan(0, 0, 0, 0, 1), // TimeSpan rate
+                middleX, middleY, // sourceX, sourceY
+                20, // size
+                1, // speed
+                new TimeSpan(0, 0, 0, 0, 400), // lifetime
+                new TimeSpan(0, 0, 0, 0, 200)); // wwitchover
+        }
+
         public override void Update(GameTime gameTime)
         {
+            m_emitter1.update(gameTime);
+            m_emitter1.SourceX = 100;
+            m_emitter1.SourceY = 100;
+
+            m_emitter2.update(gameTime);
+            m_emitter2.SourceX = 200;
+            m_emitter2.SourceY = 200;
+
+            if (particleTimer.TotalSeconds < fireRate)
+            {
+                particleTimer += gameTime.ElapsedGameTime;
+            }
+
+            if (particleTimer.TotalSeconds > fireRate)
+            {
+                //down = false;
+                particleTimer = TimeSpan.FromSeconds(0);
+            }
+
             m_spriteBatch.Begin();
 
             // Update animation timer
             animationTimer += gameTime.ElapsedGameTime;
+
+            m_emitter1.draw(m_spriteBatch);
+            m_emitter2.draw(m_spriteBatch);
 
             //
             // Draw a blue background
@@ -95,6 +155,8 @@ namespace Systems
             }
 
             m_spriteBatch.Draw(appearance.image, area, size, appearance.stroke);
+            //m_emitter1.draw(m_spriteBatch);
+            //m_emitter2.draw(m_spriteBatch);
 
             area.X = OFFSET_X + position.X * CELL_SIZE + 1;
             area.Y = OFFSET_Y + position.Y * CELL_SIZE + 1;
@@ -113,6 +175,10 @@ namespace Systems
 
             m_spriteBatch.Draw(appearance.image, area,size, color);
 
+            //m_spriteBatch.Begin();
+            //m_emitter1.draw(m_spriteBatch);
+            //m_emitter2.draw(m_spriteBatch);
+            //m_spriteBatch.End();
         }
 
         private float lerp(float a, float b, float f)

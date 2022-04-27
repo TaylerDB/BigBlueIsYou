@@ -158,6 +158,7 @@ namespace BigBlueIsYou
             m_rules = new Systems.Rules();
 
             m_sysMovement.LoadContent(content);
+            m_sysRenderer.LoadContent(content);
 
             // Add objects to level
             for (int r = 0; r < row; r++)
